@@ -1,0 +1,4 @@
+Frame: 1286
+  Row 1: 0 persons
+  Row 2: 6 persons
+  Row 3: 2 persons

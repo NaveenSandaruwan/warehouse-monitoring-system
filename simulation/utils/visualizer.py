@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 from utils.getOthersPositions import othersPositions
-def visualize_warehouse(grid, path, screen_width, screen_height):
+def visualize_warehouse(grid, path, screen_width, screen_height,camcoordinates):
     """
     Visualize the warehouse layout and the path.
 
@@ -46,6 +46,12 @@ def visualize_warehouse(grid, path, screen_width, screen_height):
         other_x = other[1] * cell_size + 25  # X coordinate (column)
         other_y = other[0] * cell_size + 25  # Y coordinate (row)
         cv2.circle(warehouse_image, (other_x, other_y), 20, (255, 0, 0), -1)
+
+    # Draw the camera positions as red circles
+    for cam in camcoordinates:
+        cam_x = cam[1] * cell_size + 25
+        cam_y = cam[0] * cell_size + 25
+        cv2.circle(warehouse_image, (cam_x, cam_y), 20, (0, 255, 255), -1)    
 
     # Scale the image to fit the screen
     warehouse_image_scaled = cv2.resize(
