@@ -63,7 +63,7 @@ from ultralytics import YOLO
 model = YOLO("yolov8n.pt")  # You can replace 'yolov8n.pt' with the path to your YOLO model file
 
 # Load the video
-cap = cv2.VideoCapture("testing/examplevideo.mp4")
+cap = cv2.VideoCapture("simulation\examplevideo.mp4")
 
 # Check if video is opened
 if not cap.isOpened():
