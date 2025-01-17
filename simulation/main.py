@@ -5,33 +5,37 @@ from utils.astar import astar
 from utils.visualizer import visualize_warehouse
 from utils.worker import get_worker_position
 
+from utils.blockRoute import block_route_in_grid
+
 # File path to the grid layout
 file_path = 'simulation\grid_layout.txt'
 
 # Load the grid layout
 warehouse_layout = load_grid(file_path)
+# print("Warehouse Layout:" , warehouse_layout)
 
 # Define start and end points
-start = (1, 1)  # Initial start position (row, col)
-goal = (3, 5)   # Goal position (row, col)
+start = (2, 1)  # Initial start position (row, col)
+goal = (8, 5)   # Goal position (row, col)
 
 while True:
+    coordinates_to_block = [(0, 0), (3, 1)]  # Coordinates to block (set to 1)
+
+    warehouse_layout_updated = block_route_in_grid(warehouse_layout, coordinates_to_block)
+    # print("warehouse_layout:", warehouse_layout_updated)
     # Find the path using A* algorithm
-    path = astar(warehouse_layout, start, goal)
+    path = astar(warehouse_layout_updated, start, goal)
     print("Path:", path)
 
     # Visualize the warehouse and path
     screen_width = 800
-    screen_height = 600
+    screen_height = 800
     warehouse_image_scaled = visualize_warehouse(
         warehouse_layout, path, screen_width, screen_height
     )
 
-    # Draw the worker's position as a red circle
-    worker_position = start
-    worker_x = worker_position[1] * 25+ 25  # X coordinate (column)
-    worker_y = worker_position[0] * 25 + 0  # Y coordinate (row)
-    cv2.circle(warehouse_image_scaled, (worker_x, worker_y), 10, (0, 0, 255), -1)
+   
+   
 
     # Display the updated image
     cv2.imshow("Warehouse Pathfinding", warehouse_image_scaled)

@@ -25,6 +25,7 @@ def astar(grid, start, goal):
     Returns:
         list: List of positions representing the path from start to goal, or None if no path is found.
     """
+    # print("grid:", grid)
     rows, cols = len(grid), len(grid[0])
     open_set = []
     heapq.heappush(open_set, (0, start))
