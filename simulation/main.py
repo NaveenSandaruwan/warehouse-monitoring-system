@@ -6,7 +6,7 @@ from utils.visualizer import visualize_warehouse
 from utils.worker import get_worker_position
 
 # File path to the grid layout
-file_path = 'testing/simulation/grid_layout.txt'
+file_path = 'simulation\grid_layout.txt'
 
 # Load the grid layout
 warehouse_layout = load_grid(file_path)
