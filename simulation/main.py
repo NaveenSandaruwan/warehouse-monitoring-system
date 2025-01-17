@@ -4,8 +4,10 @@ from utils.grid_loader import load_grid
 from utils.astar import astar
 from utils.visualizer import visualize_warehouse
 from utils.worker import get_worker_position
-
+from utils.getblockpositions import getblockposi
 from utils.blockRoute import block_route_in_grid
+
+
 
 # File path to the grid layout
 file_path = 'simulation\grid_layout.txt'
@@ -16,11 +18,14 @@ warehouse_layout = load_grid(file_path)
 
 # Define start and end points
 start = (2, 1)  # Initial start position (row, col)
-goal = (8, 5)   # Goal position (row, col)
+goal = (13, 1)   # Goal position (row, col)
+camcoordinates = [(1, 0), (13, 0)]
+
+
 
 while True:
-    coordinates_to_block = [(0, 0), (3, 1)]  # Coordinates to block (set to 1)
-
+    coordinates_to_block = getblockposi()  # Coordinates to block (set to 1)
+    warehouse_layout = load_grid(file_path)
     warehouse_layout_updated = block_route_in_grid(warehouse_layout, coordinates_to_block)
     # print("warehouse_layout:", warehouse_layout_updated)
     # Find the path using A* algorithm
@@ -31,7 +36,7 @@ while True:
     screen_width = 800
     screen_height = 800
     warehouse_image_scaled = visualize_warehouse(
-        warehouse_layout, path, screen_width, screen_height
+        warehouse_layout_updated, path, screen_width, screen_height,camcoordinates
     )
 
    
