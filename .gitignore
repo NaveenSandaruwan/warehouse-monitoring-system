@@ -1,5 +1,9 @@
 simulation/yolov8n.pt
 simulation/examplevideo.mp4
 yolov8n.pt
+
 simulation/hallway.mp4
 backend/app/config.py
+hallway.mp4
+simulation/camprocess/counts.txt
+
