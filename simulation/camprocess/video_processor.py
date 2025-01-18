@@ -2,7 +2,7 @@ import cv2
 from ultralytics import YOLO
 from file_writer import write_log
 
-def process_video(input_video_path, output_video_path, log_file_path):
+def process_video(input_video_path, output_video_path, log_file_path, camcoordinates,rawcoordinates,shared_data,cam_id):
     # Load the YOLOv8 model (pre-trained)
     model = YOLO("yolov8n.pt")  # Replace 'yolov8n.pt' with your YOLO model file if needed
 
@@ -17,7 +17,7 @@ def process_video(input_video_path, output_video_path, log_file_path):
     # Get the frame width, height, and FPS
     frame_width = int(cap.get(3))
     frame_height = int(cap.get(4))
-    fps = int(cap.get(1))
+    fps = int(cap.get(5))
 
     # Calculate row boundaries
     row_height = frame_height // 3
@@ -76,7 +76,7 @@ def process_video(input_video_path, output_video_path, log_file_path):
 
         # Write row counts to the log file
         frame_number = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
-        write_log(log_file_path, frame_number, row_counts)
+        write_log(log_file_path, frame_number, row_counts,camcoordinates,rawcoordinates,shared_data,cam_id)
 
         # Write the processed frame to the output video
         out.write(frame)
