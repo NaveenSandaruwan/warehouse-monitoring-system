@@ -25,3 +25,12 @@ def add_asset():
     return jsonify({"message": "Asset added successfully!", "asset": asset_data})
 
 # Route: Get all assets
+@app.route("/assets", methods=["GET"])
+def get_assets():
+    assets = list(assets_collection.find())
+    for asset in assets:
+        asset["_id"] = str(asset["_id"])  # Convert ObjectId to string
+    return jsonify(assets)
+
+if __name__ == "__main__":
+    app.run(debug=True)

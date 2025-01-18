@@ -15,7 +15,7 @@ def connect_to_mongodb():
 # Connect to the database
 db = connect_to_mongodb()
 
-assets_collection = db["assets"] if db is not None else None
+assets_collection = db.get_collection("assets") if db is not None else None
 
-if assets_collection:
-    assets_collection.create_index("_id", unique=True)
+# if assets_collection:
+#     assets_collection.create_index("_id", unique=True)
