@@ -1,104 +1,199 @@
-import heapq
-import numpy as np
+# import cv2
+# from ultralytics import YOLO
+
+# # Load the YOLOv8 model (pre-trained)
+# model = YOLO("yolov8n.pt")  # Replace 'yolov8n.pt' with your YOLO model file if needed
+
+# # Load the video
+# cap = cv2.VideoCapture("simulation/hallway.mp4")
+
+# # Check if video is opened
+# if not cap.isOpened():
+#     print("Error: Could not open video file.")
+#     exit()
+
+# # Get the frame width, height, and FPS
+# frame_width = int(cap.get(3))
+# frame_height = int(cap.get(4))
+# fps = int(cap.get(5))
+
+# # Calculate row boundaries
+# row_height = frame_height // 3
+# row_boundaries = [(0, row_height), (row_height, 2 * row_height), (2 * row_height, frame_height)]
+
+# # Set up the VideoWriter to save the processed video
+# fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # 'mp4v' for MP4 files
+# output_path = 'testing/output_video_with_rows.mp4'
+# out = cv2.VideoWriter(output_path, fourcc, fps, (frame_width, frame_height))
+
+# # File to log person counts
+# log_file_path = 'simulation\counts.txt'
+
+# # Clear the log file if it exists
+# with open(log_file_path, 'w') as file:
+#     file.write("Row-wise person count log\n")
+#     file.write("====================================\n")
+
+# # Process the video frame by frame
+# while cap.isOpened():
+#     ret, frame = cap.read()
+#     if not ret:
+#         break
+
+#     # Perform object detection with YOLOv8
+#     results = model(frame)  # Detect objects in the current frame
+
+#     # Filter results to keep only detections for the "person" class
+#     person_results = [result for result in results[0].boxes if result.cls == 0]  # Class ID 0 is for "person"
+
+#     # Initialize counts for each row
+#     row_counts = [0, 0, 0]
+
+#     # Draw blue horizontal lines to divide the screen into three rows
+#     for i in range(1, 3):
+#         y = row_height * i
+#         cv2.line(frame, (0, y), (frame_width, y), (255, 0, 0), 2)  # Blue line
+
+#     # Process detections and assign to rows based on the bottom line of the bounding box
+#     for person in person_results:
+#         x1, y1, x2, y2 = map(int, person.xyxy[0])  # Bounding box coordinates
+#         bottom_y = y2  # Use the bottom Y-coordinate of the bounding box
+
+#         # Determine which row the person belongs to
+#         for i, (start, end) in enumerate(row_boundaries):
+#             if start <= bottom_y < end:
+#                 row_counts[i] += 1
+#                 break
+
+#         # Draw bounding box and label on the frame
+#         confidence = person.conf.item()  # Convert tensor to float
+#         label = f"Person {confidence:.2f}"
+#         cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)  # Green box
+#         cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
+#     # Annotate the frame with row counts
+#     for i, count in enumerate(row_counts):
+#         label = f"Row {i + 1}: {count} persons"
+#         cv2.putText(frame, label, (10, 50 + i * 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
+
+#     # Write row counts to the log file
+#     with open(log_file_path, 'a') as file:
+#         file.write(f"Frame: {cap.get(cv2.CAP_PROP_POS_FRAMES):.0f}\n")
+#         for i, count in enumerate(row_counts):
+#             file.write(f"  Row {i + 1}: {count} persons\n")
+#         file.write("\n")
+
+#     # Optionally, display the frame (for debugging)
+#     cv2.imshow('Frame', frame)
+
+#     # Write the processed frame to the output video
+#     out.write(frame)
+
+#     # Exit on 'q' key press
+#     if cv2.waitKey(1) & 0xFF == ord('q'):
+#         break
+
+# # Release resources
+# cap.release()
+# out.release()
+# cv2.destroyAllWindows()
 import cv2
-import json
+from ultralytics import YOLO
 
-# Read the grid layout from a file
-def load_grid(file_path):
-    with open(file_path, 'r') as file:
-        grid = eval(file.read())  # Alternatively, use json.loads() if the file contains valid JSON
-    return grid
+# Load the YOLOv8 model (pre-trained)
+model = YOLO("yolov8n.pt")  # Replace 'yolov8n.pt' with your YOLO model file if needed
 
-# Load the grid
-file_path = 'testing\simulation\grid_layout.txt'
-warehouse_layout = load_grid(file_path)
+# Load the video
+cap = cv2.VideoCapture("simulation/hallway.mp4")
 
-# Define start and end points
-start = (1, 1)  # (row, col)
-goal = (3, 5)
+# Check if video is opened
+if not cap.isOpened():
+    print("Error: Could not open video file.")
+    exit()
 
-# A* Algorithm
-def heuristic(a, b):
-    return abs(a[0] - b[0]) + abs(a[1] - b[1])  # Manhattan distance
+# Get the frame width, height, and FPS
+frame_width = int(cap.get(3))
+frame_height = int(cap.get(4))
+fps = int(cap.get(5))
 
-def astar(grid, start, goal):
-    rows, cols = len(grid), len(grid[0])
-    open_set = []
-    heapq.heappush(open_set, (0, start))
-    came_from = {}
-    g_score = {start: 0}
-    f_score = {start: heuristic(start, goal)}
-    
-    while open_set:
-        _, current = heapq.heappop(open_set)
-        
-        if current == goal:
-            # Reconstruct path
-            path = []
-            while current in came_from:
-                path.append(current)
-                current = came_from[current]
-            path.append(start)
-            return path[::-1]
-        
-        neighbors = [
-            (current[0] + 1, current[1]), (current[0] - 1, current[1]),
-            (current[0], current[1] + 1), (current[0], current[1] - 1)
-        ]
-        
-        for neighbor in neighbors:
-            r, c = neighbor
-            if 0 <= r < rows and 0 <= c < cols and grid[r][c] == 0:
-                tentative_g_score = g_score[current] + 1
-                if neighbor not in g_score or tentative_g_score < g_score[neighbor]:
-                    came_from[neighbor] = current
-                    g_score[neighbor] = tentative_g_score
-                    f_score[neighbor] = tentative_g_score + heuristic(neighbor, goal)
-                    heapq.heappush(open_set, (f_score[neighbor], neighbor))
-    
-    return None  # No path found
+# Calculate row boundaries
+row_height = frame_height // 3
+row_boundaries = [(0, row_height), (row_height, 2 * row_height), (2 * row_height, frame_height)]
 
-# Find the path
-path = astar(warehouse_layout, start, goal)
-print("Path:", path)
+# Set up the VideoWriter to save the processed video
+fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # 'mp4v' for MP4 files
+output_path = 'testing/output_video_with_rows.mp4'
+out = cv2.VideoWriter(output_path, fourcc, fps, (frame_width, frame_height))
 
-# Visualize the result
-cell_size = 50  # Default size for each cell
-rows, cols = len(warehouse_layout), len(warehouse_layout[0])
-warehouse_image = np.zeros((rows * cell_size, cols * cell_size, 3), dtype=np.uint8)
+# Text file to store the row-wise person counts
+text_file_path = "simulation\counts.txt"
 
-for i, row in enumerate(warehouse_layout):
-    for j, cell in enumerate(row):
-        color = (0, 0, 0) if cell == 1 else (255, 255, 255)
-        cv2.rectangle(
-            warehouse_image,
-            (j * cell_size, i * cell_size),
-            ((j + 1) * cell_size, (i + 1) * cell_size),
-            color,
-            -1
-        )
+# Clear the file content at the start
+with open(text_file_path, "w") as file:
+    file.write("Frame-by-Frame Person Count:\n")
 
-# Highlight the path
-if path:
-    for r, c in path:
-        cv2.rectangle(
-            warehouse_image,
-            (c * cell_size, r * cell_size),
-            ((c + 1) * cell_size, (r + 1) * cell_size),
-            (0, 255, 0),
-            -1
-        )
+# Process the video frame by frame
+frame_number = 0
+while cap.isOpened():
+    ret, frame = cap.read()
+    if not ret:
+        break
 
-# Scale the image to fit the screen
-screen_width = 800  # Adjust as per your screen resolution
-screen_height = 600  # Adjust as per your screen resolution
-warehouse_image_scaled = cv2.resize(
-    warehouse_image, 
-    (screen_width, screen_height), 
-    interpolation=cv2.INTER_AREA
-)
+    frame_number += 1
 
-# Display the warehouse with the path
-cv2.imshow("Warehouse Pathfinding", warehouse_image_scaled)
-cv2.waitKey(0)
+    # Perform object detection with YOLOv8
+    results = model(frame)  # Detect objects in the current frame
+
+    # Filter results to keep only detections for the "person" class
+    person_results = [result for result in results[0].boxes if result.cls == 0]  # Class ID 0 is for "person"
+
+    # Initialize counts for each row
+    row_counts = [0, 0, 0]
+
+    # Draw blue horizontal lines to divide the screen into three rows
+    for i in range(1, 3):
+        y = row_height * i
+        cv2.line(frame, (0, y), (frame_width, y), (255, 0, 0), 2)  # Blue line
+
+    # Process detections and assign to rows based on the bottom line of the bounding box
+    for person in person_results:
+        x1, y1, x2, y2 = map(int, person.xyxy[0])  # Bounding box coordinates
+        bottom_y = y2  # Use the bottom Y-coordinate of the bounding box
+
+        # Determine which row the person belongs to
+        for i, (start, end) in enumerate(row_boundaries):
+            if start <= bottom_y < end:
+                row_counts[i] += 1
+                break
+
+        # Draw bounding box and label on the frame
+        confidence = person.conf.item()  # Convert tensor to float
+        label = f"Person {confidence:.2f}"
+        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)  # Green box
+        cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
+    # Annotate the frame with row counts
+    for i, count in enumerate(row_counts):
+        label = f"Row {i + 1}: {count} persons"
+        cv2.putText(frame, label, (10, 50 + i * 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
+
+    # Write row-wise counts to the text file
+    with open(text_file_path, "a") as file:
+        file.write(f"Frame {frame_number}: Row 1: {row_counts[0]}, Row 2: {row_counts[1]}, Row 3: {row_counts[2]}\n")
+
+    # Optionally, display the frame (for debugging)
+    cv2.imshow('Frame', frame)
+
+    # Write the processed frame to the output video
+    out.write(frame)
+
+    # Exit on 'q' key press
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# Release resources
+cap.release()
+out.release()
 cv2.destroyAllWindows()
+
+print(f"Row-wise person counts have been saved to {text_file_path}")

@@ -1,4 +1,4 @@
-from camprocess.video_processor import process_video
+from simulation.utils.video_processor import process_video
 
 if __name__ == "__main__":
     # Input video path
