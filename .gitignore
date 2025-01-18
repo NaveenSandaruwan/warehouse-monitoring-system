@@ -9,3 +9,5 @@ simulation/camprocess/counts.txt
 
 camprocess/__pycache__/
 simulation/utils/__pycache__/
+frontend/__pycache__/
+backend/app/__pycache__/
