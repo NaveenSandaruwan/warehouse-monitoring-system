@@ -47,6 +47,18 @@ def get_task(task_id):
         return jsonify(task)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+# Route: Get tasks where occupied is False
+@task_api.route("/tasks/unoccupied", methods=["GET"])
+def get_unoccupied_tasks():
+    try:
+        tasks = list(tasks_collection.find({"occupied": False}))
+        for task in tasks:
+            task["_id"] = str(task["_id"])  # Convert ObjectId to string
+        return jsonify(tasks)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 # Route: Update a task
 @task_api.route("/tasks/<task_id>", methods=["PUT"])
