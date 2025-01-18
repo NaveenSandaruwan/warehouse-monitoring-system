@@ -17,7 +17,8 @@ def add_task():
             "status": data["status"],  # e.g., "pending", "completed"
             "created_at": data["created_at"],  # ISO format timestamp
             "updated_at": data["updated_at"],  # ISO format timestamp
-            "route_id": data["route_id"]
+            "route_id": data["route_id"],
+            "occupied": False
         }
         tasks_collection.insert_one(task_data)
         return jsonify({"message": "Task added successfully!", "task": task_data})
