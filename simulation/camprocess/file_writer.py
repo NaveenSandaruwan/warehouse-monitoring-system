@@ -46,7 +46,7 @@ def write_log(log_file_path, frame_number, row_counts, cam_coordinates, raw_coor
     blocked_coordinates = determine_blocked_coordinates(row_counts, raw_coordinates)
     shared_data[cam_id] = {"frame": frame_number, "blocked_coordinates": blocked_coordinates}
     # Write only the blocked coordinates to the file
-    with open(log_file_path, 'w') as file:
-        # file.write(f"Frame: {frame_number}\n")
-        file.write(str(blocked_coordinates))
-        # file.write(f"Camera Coordinates: {cam_coordinates}\n")
+    # with open(log_file_path, 'w') as file:
+    #     # file.write(f"Frame: {frame_number}\n")
+    #     file.write(str(blocked_coordinates))
+    #     # file.write(f"Camera Coordinates: {cam_coordinates}\n")
