@@ -1,5 +1,5 @@
 def getblockposi():
-    coordinates_to_block = [(0, 0), (11, 1)]
+    coordinates_to_block = [(12, 3), (11, 1),(12, 5)]
 
     # Read the file and get coordinates
     with open('simulation/camprocess/real_time_updates.txt', 'r') as file:

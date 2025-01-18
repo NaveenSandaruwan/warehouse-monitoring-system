@@ -17,7 +17,7 @@ def process_video(input_video_path, output_video_path, log_file_path, camcoordin
     # Get the frame width, height, and FPS
     frame_width = int(cap.get(3))
     frame_height = int(cap.get(4))
-    fps = int(cap.get(5))
+    fps = int(cap.get(1))
 
     # Calculate row boundaries
     row_height = frame_height // 3

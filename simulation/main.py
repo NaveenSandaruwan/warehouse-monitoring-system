@@ -21,8 +21,8 @@ start = (2, 1)  # Initial start position (row, col)
 goal = (13, 1)   # Goal position (row, col)
 camcoordinates = [(1, 0), (13, 0)]
 
-
-
+lastlenght = None
+length_diff = 0
 while True:
     coordinates_to_block = getblockposi()  # Coordinates to block (set to 1)
     warehouse_layout = load_grid(file_path)
@@ -30,8 +30,15 @@ while True:
     # print("warehouse_layout:", warehouse_layout_updated)
     # Find the path using A* algorithm
     path = astar(warehouse_layout_updated, start, goal)
-    print("Path:", path)
+    # print("Path:", path)
     pathlength = len(path)
+
+    if lastlenght:
+        length_diff = pathlength - lastlenght+1
+        if length_diff <= 0:
+            print(f"Path is shorter  {length_diff}")
+        else:
+            print(f"Path is longer  {length_diff}")
 
     # Visualize the warehouse and path
     screen_width = 800
@@ -54,6 +61,8 @@ while True:
     worker_position = get_worker_position(path)
     start = worker_position
 
+
+    lastlenght=pathlength
     # Simulate delay for worker movement
     time.sleep(1)
 # Close all OpenCV windows
