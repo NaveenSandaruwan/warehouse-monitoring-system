@@ -1,4 +1,0 @@
-Frame: 258
-  Row 1: 0 persons
-  Row 2: 3 persons
-  Row 3: 4 persons
