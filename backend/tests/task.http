@@ -1,1 +1,5 @@
 GET http://localhost:5000/tasks
+
+###
+
+GET http://localhost:5000/tasks/unoccupied
