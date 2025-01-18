@@ -2,3 +2,4 @@ simulation/yolov8n.pt
 simulation/examplevideo.mp4
 yolov8n.pt
 simulation/hallway.mp4
+backend/app/config.py
