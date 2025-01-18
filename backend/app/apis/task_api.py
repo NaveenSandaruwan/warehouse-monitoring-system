@@ -17,7 +17,8 @@ def add_task():
             "status": data["status"],  # e.g., "pending", "completed"
             "created_at": data["created_at"],  # ISO format timestamp
             "updated_at": data["updated_at"],  # ISO format timestamp
-            "route_id": data["route_id"]
+            "route_id": data["route_id"],
+            "occupied": False
         }
         tasks_collection.insert_one(task_data)
         return jsonify({"message": "Task added successfully!", "task": task_data})
@@ -46,6 +47,18 @@ def get_task(task_id):
         return jsonify(task)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+# Route: Get tasks where occupied is False
+@task_api.route("/tasks/unoccupied", methods=["GET"])
+def get_unoccupied_tasks():
+    try:
+        tasks = list(tasks_collection.find({"occupied": False}))
+        for task in tasks:
+            task["_id"] = str(task["_id"])  # Convert ObjectId to string
+        return jsonify(tasks)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 # Route: Update a task
 @task_api.route("/tasks/<task_id>", methods=["PUT"])
