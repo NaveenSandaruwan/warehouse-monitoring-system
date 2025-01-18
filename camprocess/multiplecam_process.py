@@ -7,7 +7,7 @@ def real_time_file_writer(shared_data):
     """
     Continuously writes real-time updates from the shared data to a file.
     """
-    output_file = "simulation/camprocess/real_time_updates.txt"
+    output_file = "camprocess/real_time_updates.txt"
    
 
     while True:
@@ -31,9 +31,9 @@ if __name__ == "__main__":
     shared_data = manager.dict()
     # Video 1 details
     video1 = {
-        "input": "simulation/hallway.mp4",
+        "input": "simulation\hallway.mp4",
         "output": "testing/output_video1.mp4",
-        "log": "simulation/camprocess/log1.txt",
+        "log": "camprocess\log1.txt",
         "camcoordinates": [(13, 0)],
         "rawcoordinates": [(13, 6), (13, 4), (13, 2)],
         "cam_id": "cam1"
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     video2 = {
         "input": "simulation/hallway.mp4",
         "output": "testing/output_video2.mp4",
-        "log": "simulation/camprocess/log2.txt",
+        "log": "camprocess/log2.txt",
         "camcoordinates": [(1, 0)],
         "rawcoordinates": [(1, 6), (1, 4), (1, 2)],
         "cam_id": "cam2"
