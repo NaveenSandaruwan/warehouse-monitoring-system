@@ -31,12 +31,13 @@ while True:
     # Find the path using A* algorithm
     path = astar(warehouse_layout_updated, start, goal)
     print("Path:", path)
+    pathlength = len(path)
 
     # Visualize the warehouse and path
     screen_width = 800
     screen_height = 800
     warehouse_image_scaled = visualize_warehouse(
-        warehouse_layout_updated, path, screen_width, screen_height,camcoordinates
+        warehouse_layout_updated, path, screen_width, screen_height,camcoordinates,coordinates_to_block
     )
 
    

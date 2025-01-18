@@ -7,3 +7,4 @@ backend/app/config.py
 hallway.mp4
 simulation/camprocess/counts.txt
 
+simulation/camprocess/__pycache__/
