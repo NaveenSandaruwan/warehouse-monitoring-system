@@ -122,11 +122,20 @@ class MainMenu:
         self.draw_menu()
 
     def map_window(self):
+        sections = fetch_sections_and_locations()
         running = True
         grid_size = len(grid)
         cell_size = 20
         start_pos = None
         goal_pos = None
+
+        def find_nearest_empty_cell(x, y):
+            directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+            for dx, dy in directions:
+                nx, ny = x + dx, y + dy
+                if 0 <= nx < grid_size and 0 <= ny < grid_size and grid[ny][nx] == 0:
+                    return (ny, nx)
+            return None
 
         while running:
             for event in pygame.event.get():
@@ -139,6 +148,10 @@ class MainMenu:
                     grid_x = mouse_pos[0] // cell_size
                     grid_y = mouse_pos[1] // cell_size
                     if 0 <= grid_x < grid_size and 0 <= grid_y < grid_size:
+                        if grid[grid_y][grid_x] == 1:
+                            nearest_empty = find_nearest_empty_cell(grid_x, grid_y)
+                            if nearest_empty:
+                                grid_y, grid_x = nearest_empty
                         if start_pos is None:
                             start_pos = (grid_y, grid_x)  # Reverse x and y
                         elif goal_pos is None:
@@ -157,6 +170,13 @@ class MainMenu:
                     if grid[y][x] == 1:
                         pygame.draw.rect(self.screen, self.GRAY, rect)
                     pygame.draw.rect(self.screen, self.BLACK, rect, 1)
+
+            for section in sections:
+                section_name = section['name']
+                coord = tuple(map(int, section['coordinates'].strip("()").split(',')))
+                pygame.draw.rect(self.screen, self.BLUE, (coord[1] * cell_size, coord[0] * cell_size, cell_size, cell_size))
+                text = self.font.render(section_name, True, self.BLACK)
+                self.screen.blit(text, (coord[1] * cell_size, coord[0] * cell_size))
 
             if start_pos:
                 pygame.draw.rect(self.screen, self.BLUE, (start_pos[1] * cell_size, start_pos[0] * cell_size, cell_size, cell_size))  # Reverse x and y
@@ -192,7 +212,17 @@ def read_grid_layout(file_path):
         grid = json.load(file)
     return grid
 
-grid = read_grid_layout('grid_layout.txt')
+def fetch_sections_and_locations():
+    try:
+        response = requests.get("http://localhost:5000/locations")
+        response.raise_for_status()  # Check if the request was successful
+        return response.json()  # Return the fetched locations as a JSON object
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching sections and locations: {e}")
+        return []  # Return an empty list in case of an error
+
+grid = read_grid_layout('../simulation/grid_layout.txt')
+
 if __name__ == "__main__":
     main_menu = MainMenu()
     main_menu.run()

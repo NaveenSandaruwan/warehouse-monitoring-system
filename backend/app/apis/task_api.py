@@ -78,3 +78,4 @@ def delete_task(task_id):
         return jsonify({"message": f"Task {task_id} deleted successfully!"})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
