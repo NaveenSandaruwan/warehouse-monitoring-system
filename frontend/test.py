@@ -21,14 +21,14 @@ class SimulationRunner:
         if utils_path not in sys.path:
             sys.path.append(utils_path)
 
-    def run(self, start, goal, camcoordinates):
+    def run(self, start, goal, camcoordinates,itemsize,wid,iterations):
         # Import run_simulation from the main module in the simulation directory
         from simulation.main import run_simulation
-        run_simulation(start, goal, camcoordinates)
+        run_simulation(start, goal, camcoordinates,itemsize,wid,iterations)
 
 if __name__ == "__main__":
     runner = SimulationRunner()
     start = (2, 1)  # Initial start position (row, col)
     goal = (13, 1)  # Goal position (row, col)
     camcoordinates = [(1, 0), (13, 0)]
-    runner.run(start, goal, camcoordinates)
+    runner.run(start, goal, camcoordinates,"small",110,1)

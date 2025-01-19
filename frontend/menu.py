@@ -94,8 +94,11 @@ class MainMenu:
                             show_simulation = SimulationRunner()
                             start = tuple(map(int, task["start"].strip("()").split(',')))
                             goal = tuple(map(int, task["end"].strip("()").split(',')))
+                            itemsize=task["itemsize"]
+                            iterations =int (task["iterations"])
                             camcoordinates = [(1, 0), (13, 0)]
-                            show_simulation.run(start, goal, camcoordinates)
+                            wid=110
+                            show_simulation.run(start, goal, camcoordinates, itemsize,wid,iterations)
                             running = False
                         y_offset += 40
 
@@ -158,7 +161,7 @@ class MainMenu:
                             goal_pos = (grid_y, grid_x)  # Reverse x and y
                             show_simulation = SimulationRunner()
                             camcoordinates = [(1, 0), (13, 0)]
-                            show_simulation.run(start_pos, goal_pos, camcoordinates)
+                            show_simulation.run(start_pos, goal_pos, camcoordinates,wid=110)
                             running = False
 
             self.screen.fill(self.WHITE)
