@@ -19,6 +19,10 @@ Accept: application/json
 GET http://localhost:5000/users/wid/110/location
 Accept: application/json
 
+### Check if WID exists
+GET http://localhost:5000/users/wid/110/exists
+Accept: application/json
+
 ### Add a new user
 POST http://localhost:5000/users
 Content-Type: application/json

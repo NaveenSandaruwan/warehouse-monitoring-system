@@ -73,6 +73,18 @@ def get_user_location_by_wid(wid):
             return jsonify({"error": "User not found"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+# Route: Check if WID exists
+@user_api.route("/users/wid/<wid>/exists", methods=["GET"])
+def check_wid_exists(wid):
+    try:
+        user = users_collection.find_one({"wid": int(wid)}, {"_id": 1})
+        if user:
+            return jsonify({"exists": True})
+        else:
+            return jsonify({"exists": False})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 # Route: Update a user
