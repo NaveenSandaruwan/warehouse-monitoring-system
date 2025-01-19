@@ -1,0 +1,73 @@
+### Get all users
+GET http://localhost:5000/users
+Accept: application/json
+
+###
+
+### Get a user by ID
+GET http://localhost:5000/users/678c902d70e8348d2982832a
+Accept: application/json
+
+###
+
+### Get a user by WID
+GET http://localhost:5000/users/wid/110
+Accept: application/json
+
+###
+
+### Add a new user
+POST http://localhost:5000/users
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "wid": 110,
+  "type": "forklift",
+  "current_location": "(1,1)",
+  "Work_done": 1,
+  "status": 1,
+  "last_updated": "2025-01-17T10:00:00Z"
+}
+
+###
+
+### Update a user
+PUT http://localhost:5000/users/678c902d70e8348d2982832a
+Content-Type: application/json
+
+{
+  "name": "John Doe Updated",
+  "wid": 110,
+  "type": "forklift",
+  "current_location": "(2,2)",
+  "Work_done": 2,
+  "status": 1,
+  "last_updated": "2025-01-18T10:00:00Z"
+}
+
+###
+
+### Update user location by ID
+PUT http://localhost:5000/users/678c902d70e8348d2982832a/location
+Content-Type: application/json
+
+{
+  "current_location": "(3,3)"
+}
+
+###
+
+### Update user work done by ID
+PUT http://localhost:5000/users/678c902d70e8348d2982832a/work_done
+Content-Type: application/json
+
+{
+  "Work_done": 3
+}
+
+###
+
+### Delete a user
+DELETE http://localhost:5000/users/678c902d70e8348d2982832a
+Accept: application/json

@@ -15,7 +15,7 @@ POST http://localhost:5000/locations
 Content-Type: application/json
 
 {
-  "id": 2,
+  "id": 10,
   "name": "Section B",
   "coordinates": "(20,10)",
   "type": "aisle"
