@@ -120,8 +120,8 @@ def runmap(start, goal, camcoordinates,type="small",wid=111):
 def run_simulation(start, goal, camcoordinates,type="small",wid=111,n=1):
     for i in range(n):
         w_start= get_user_location(wid)
-        runmap(w_start, start, camcoordinates,type,wid)
-        runmap(start, goal, camcoordinates,"medium",wid)
+        runmap(w_start, start, camcoordinates,"small",wid)
+        runmap(start, goal, camcoordinates,type,wid)
 
 
 

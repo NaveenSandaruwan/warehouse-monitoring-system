@@ -14,7 +14,7 @@ def gettime(pointlist,start):
             (12, 3):20, (11, 1):3,(12, 5):1
             }
     for point in pointlist:
-        if dict[point]:
+        if point in dict:
             time += dict[point]
         
     return time
