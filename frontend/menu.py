@@ -24,6 +24,7 @@ class MainMenu:
         self.quit_button = pygame.Rect(300, 400, 200, 50)
 
         self.running = True
+        self.wid=None
 
     def draw_menu(self):
         self.screen.fill(self.WHITE)
@@ -98,7 +99,7 @@ class MainMenu:
                             iterations =int (task["iterations"])
                             camcoordinates = [(1, 0), (13, 0)]
                             wid=110
-                            show_simulation.run(start, goal, camcoordinates, itemsize,wid,iterations)
+                            show_simulation.run(start, goal, camcoordinates, itemsize,self.wid,iterations)
                             running = False
                         y_offset += 40
 
@@ -161,7 +162,7 @@ class MainMenu:
                             goal_pos = (grid_y, grid_x)  # Reverse x and y
                             show_simulation = SimulationRunner()
                             camcoordinates = [(1, 0), (13, 0)]
-                            show_simulation.run(start_pos, goal_pos, camcoordinates,wid=110)
+                            show_simulation.run(start_pos, goal_pos, camcoordinates,self.wid)
                             running = False
 
             self.screen.fill(self.WHITE)
@@ -190,7 +191,8 @@ class MainMenu:
 
         self.draw_menu()
 
-    def run(self):
+    def run(self,wid):
+        self.wid=wid
         while self.running:
             self.draw_menu()
             for event in pygame.event.get():

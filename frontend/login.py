@@ -1,5 +1,6 @@
 import pygame
 import sys
+import requests
 
 users = ['1', '2', '3']
 
@@ -33,7 +34,7 @@ class LoginPage:
         self.color = self.color_inactive
         self.active = False
         self.text = ''
-
+        self.wid=0
         # Login button
         self.button = pygame.Rect(350, 320, 100, 50)
 
@@ -45,6 +46,17 @@ class LoginPage:
         textrect = textobj.get_rect()
         textrect.topleft = (x, y)
         surface.blit(textobj, textrect)
+        
+    def check_wid_exists(self, wid):
+        url = f"http://localhost:5000/users/wid/{wid}/exists"
+        headers = {
+            "Accept": "application/json"
+        }
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            data = response.json()
+            return data.get("exists", False)
+        return False
 
     def run(self):
         running = True
@@ -61,9 +73,11 @@ class LoginPage:
                     self.color = self.color_active if self.active else self.color_inactive
 
                     if self.button.collidepoint(event.pos):
-                        if self.text in users:
+                        if self.check_wid_exists(int(self.text)):
+                            self.wid=self.text
                             print(f"Username entered: {self.text}")
                             self.error_message = ''
+                            return int(self.wid)
                             running = False  # Exit the run function
                         else:
                             self.error_message = 'Username not found'
@@ -72,9 +86,11 @@ class LoginPage:
                 if event.type == pygame.KEYDOWN:
                     if self.active:
                         if event.key == pygame.K_RETURN:
-                            if self.text in users:
+                            if self.check_wid_exists(int(self.text)):
+                                self.wid=self.text
                                 print(f"Username entered: {self.text}")
                                 self.error_message = ''
+                                return int(self.wid)
                                 running = False  # Exit the run function
                             else:
                                 self.error_message = 'Username not found'
@@ -102,7 +118,8 @@ class LoginPage:
 
             pygame.display.flip()
             pygame.time.Clock().tick(30)
+            
 
 if __name__ == "__main__":
     login_page = LoginPage()
-    login_page.run()
+    print(login_page.run())
