@@ -9,7 +9,7 @@ from utils.blockRoute import block_route_in_grid
 from utils.getbocktime import gettime
 from utils.checknearestblocks import check_nearest_blocks
 
-def run_simulation(start, goal, camcoordinates):
+def run_simulation(start, goal, camcoordinates,type="small"):
     # File path to the grid layout
     file_path = 'simulation/grid_layout.txt'
 
