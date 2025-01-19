@@ -110,6 +110,20 @@ def update_user_work_done(user_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# Route: Increment work done by ID
+@user_api.route("/users/<user_id>/increment_work_done", methods=["PUT"])
+def increment_user_work_done(user_id):
+    try:
+        data = request.json
+        increment_value = data.get("increment_value", 1)  # Default increment value is 1
+        result = users_collection.update_one({"_id": ObjectId(user_id)}, {"$inc": {"Work_done": increment_value}})
+        if result.modified_count > 0:
+            return jsonify({"message": "User work done incremented successfully!"})
+        else:
+            return jsonify({"error": "User not found or no changes made"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 # Route: Delete a user
 @user_api.route("/users/<user_id>", methods=["DELETE"])
 def delete_user(user_id):
