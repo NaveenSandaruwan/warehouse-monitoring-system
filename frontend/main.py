@@ -16,6 +16,3 @@ def read_grid_layout(file_path):
 if __name__ == '__main__':
     login_page = LoginPage()
     login_page.run()
-    grid = read_grid_layout('grid_layout.txt')
-    warehouse_grid = WarehouseGrid(grid)
-    warehouse_grid.run()
