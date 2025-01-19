@@ -17,5 +17,6 @@ db = connect_to_mongodb()
 
 assets_collection = db.get_collection("assets") if db is not None else None
 tasks_collection = db["tasks"]  # Add this for task management
+locations_collection = db["locations"]  # Add this for location
 # if assets_collection:
 #     assets_collection.create_index("_id", unique=True)
