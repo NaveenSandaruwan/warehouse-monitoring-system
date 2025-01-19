@@ -3,3 +3,7 @@ GET http://localhost:5000/tasks
 ###
 
 GET http://localhost:5000/tasks/unoccupied
+
+### Delete a task
+DELETE http://localhost:5000/tasks/678c946970e8348d2982833c
+Accept: application/json

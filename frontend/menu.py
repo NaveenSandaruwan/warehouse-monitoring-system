@@ -98,8 +98,11 @@ class MainMenu:
                             itemsize=task["itemsize"]
                             iterations =int (task["iterations"])
                             camcoordinates = [(1, 0), (13, 0)]
-                            wid=110
-                            show_simulation.run(start, goal, camcoordinates, itemsize,self.wid,iterations)
+                            # wid=110
+                            isdone =show_simulation.run(start, goal, camcoordinates, itemsize,self.wid,iterations)
+                            if isdone:
+                                print(task["_id"])
+                                self.delete_task(task["_id"])
                             running = False
                         y_offset += 40
 
@@ -124,6 +127,14 @@ class MainMenu:
             pygame.display.flip()
 
         self.draw_menu()
+    def delete_task(self,task_id):
+        url = f"http://localhost:5000/tasks/{task_id}"
+        headers = {
+            "Accept": "application/json"
+        }
+        response = requests.delete(url, headers=headers)
+        return response.json()
+    
 
     def map_window(self):
         sections = fetch_sections_and_locations()
@@ -162,7 +173,7 @@ class MainMenu:
                             goal_pos = (grid_y, grid_x)  # Reverse x and y
                             show_simulation = SimulationRunner()
                             camcoordinates = [(1, 0), (13, 0)]
-                            show_simulation.run(start_pos, goal_pos, camcoordinates,self.wid)
+                            isdone =show_simulation.run(start_pos, goal_pos, camcoordinates,self.wid) 
                             running = False
 
             self.screen.fill(self.WHITE)

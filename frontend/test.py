@@ -24,7 +24,7 @@ class SimulationRunner:
     def run(self, start, goal, camcoordinates,itemsize,wid,iterations):
         # Import run_simulation from the main module in the simulation directory
         from simulation.main import run_simulation
-        run_simulation(start, goal, camcoordinates,itemsize,wid,iterations)
+        return run_simulation(start, goal, camcoordinates,itemsize,wid,iterations)
 
 if __name__ == "__main__":
     runner = SimulationRunner()
