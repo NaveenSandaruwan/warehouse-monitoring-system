@@ -1,0 +1,16 @@
+GET http://localhost:5000/works/date/2025-01-17
+Accept: application/json
+
+###
+GET http://localhost:5000/works/wid/111
+Accept: application/json
+
+###
+POST http://localhost:5000/works
+Content-Type: application/json
+
+{
+  "wid": 111,
+  "date": "2025-01-19",
+  "work_done": 5
+}
