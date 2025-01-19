@@ -114,14 +114,16 @@ def runmap(start, goal, camcoordinates,type="small",wid=111):
         # Simulate delay for worker movement
         time.sleep(0.5)
 
-    # Close all OpenCV windows
-    cv2.destroyAllWindows()
+   
 
 def run_simulation(start, goal, camcoordinates,type="small",wid=111,n=1):
     for i in range(n):
         w_start= get_user_location(wid)
         runmap(w_start, start, camcoordinates,"small",wid)
         runmap(start, goal, camcoordinates,type,wid)
+         # Close all OpenCV windows
+    cv2.destroyAllWindows()
+    return True
 
 
 

@@ -69,3 +69,18 @@
 #     time.sleep(1)
 # # Close all OpenCV windows
 # cv2.destroyAllWindows()
+import requests
+
+def delete_task(task_id):
+    url = f"http://localhost:5000/tasks/{task_id}"
+    headers = {
+        "Accept": "application/json"
+    }
+    response = requests.delete(url, headers=headers)
+    return response.json()
+
+# Example usage
+if __name__ == "__main__":
+    task_id = "678c946970e8348d2982833b"
+    response = delete_task(task_id)
+    print(response)
