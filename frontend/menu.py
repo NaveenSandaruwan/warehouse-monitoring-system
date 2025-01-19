@@ -173,7 +173,7 @@ class MainMenu:
                             goal_pos = (grid_y, grid_x)  # Reverse x and y
                             show_simulation = SimulationRunner()
                             camcoordinates = [(1, 0), (13, 0)]
-                            isdone =show_simulation.run(start_pos, goal_pos, camcoordinates,self.wid) 
+                            isdone =show_simulation.run(start_pos, goal_pos, camcoordinates, "small",self.wid,1) 
                             running = False
 
             self.screen.fill(self.WHITE)
