@@ -13,3 +13,4 @@ frontend/__pycache__/
 backend/app/__pycache__/
 
 __pycache__/
+*.mp4
