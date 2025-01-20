@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import time
 
 # Load pre-trained model and configuration file for person detection
 net = cv2.dnn.readNetFromCaffe('deploy.prototxt', 'mobilenet_iter_73000.caffemodel')
@@ -30,7 +31,7 @@ def process_video(video_path):
 
         for i in range(detections.shape[2]):
             confidence = detections[0, 0, i, 2]
-            if confidence > 0.4:  # Lowered confidence threshold
+            if confidence > 0.7:  # Lowered confidence threshold
                 idx = int(detections[0, 0, i, 1])
                 if idx == 15:  # Class ID for person in MobileNet-SSD
                     box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
@@ -52,9 +53,12 @@ def process_video(video_path):
                     if len(track['positions']) > 10:  # Keep the last 10 positions
                         track['positions'].pop(0)
                     if np.linalg.norm(np.array(pos) - np.array(track['positions'][0])) < 5: # Threshold for idle
+                        if track['idle_frames'] == 0:
+                            track['idle_start_time'] = time.time()  # Record the start time of idle
                         track['idle_frames'] += 1
                     else:
                         track['idle_frames'] = 0
+                        track['idle_start_time'] = None  # Reset idle start time
                     track['prev_position'] = pos
                     matched = True
                     break
@@ -64,6 +68,7 @@ def process_video(video_path):
                     'prev_position': pos,
                     'frames': 1,
                     'idle_frames': 0,
+                    'idle_start_time': None,  # Initialize idle start time
                     'missed_frames': 0,  # Add a counter for missed frames
                     'positions': [pos]  # Store the last 10 positions
                 }
@@ -89,7 +94,8 @@ def process_video(video_path):
             startY = max(0, min(startY, h - 1))
             endX = max(0, min(endX, w - 1))
             endY = max(0, min(endY, h - 1))
-            label = f"ID {pid}: {'Idle' if track['idle_frames'] > 10 else 'Not Idle'}"
+            idle_time = time.time() - track['idle_start_time'] if track['idle_start_time'] else 0
+            label = f"ID {pid}: {'Idle' if track['idle_frames'] > 10 else 'Not Idle'} ({idle_time:.2f}s)"
             print(f"Drawing box for ID {pid}: {startX, startY, endX, endY} with label {label}")
             cv2.rectangle(frame, (startX, startY), (endX, endY), (0, 255, 0), 2)
             cv2.putText(frame, label, (startX, startY - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
@@ -103,6 +109,7 @@ def process_video(video_path):
 
     cap.release()
     cv2.destroyAllWindows()
+    print("All Persons tracked : ", person_tracks)
 
 if __name__ == "__main__":
-    process_video("girl.mp4")
+    process_video("standing-2.mp4")
