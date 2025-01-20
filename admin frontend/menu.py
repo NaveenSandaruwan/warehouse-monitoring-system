@@ -2,6 +2,7 @@ import pygame
 from report import ReportGenerator
 from camera import CameraSystem
 
+
 class MainMenu:
     def __init__(self, screen):
         self.screen = screen
@@ -25,7 +26,7 @@ class MainMenu:
                         if self.selected_option == 0:
                             ReportGenerator(self.screen).generate()
                         elif self.selected_option == 1:
-                            CameraSystem().start()
+                            CameraSystem().run()
                     elif event.key == pygame.K_ESCAPE:
                         running = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -38,7 +39,7 @@ class MainMenu:
                                 if self.selected_option == 0:
                                     ReportGenerator(self.screen).generate()
                                 elif self.selected_option == 1:
-                                    CameraSystem().start()
+                                    CameraSystem().run()
 
             self.screen.fill((0, 0, 0))
             for i, option in enumerate(self.options):
