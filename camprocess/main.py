@@ -47,7 +47,7 @@ def camprocess(input_video_path, output_video_path, log_file_path, camcoordinate
     print(f"Processing completed. Output video saved at: {output_video_path}")
     print(f"Log file saved at: {log_file_path}")
 
-if __name__ == "__main__":
+def start_blockcheking_camsystem():
     manager = Manager()
     shared_data = manager.dict()
     # Video 1 details
@@ -87,3 +87,6 @@ if __name__ == "__main__":
     printer_process.terminate()
 
     print("Both videos processed successfully.")
+
+if __name__ == "__main__":
+    start_blockcheking_camsystem()    

@@ -16,6 +16,13 @@ GET http://localhost:5000/users/wid/110
 Accept: application/json
 
 ###
+### Get user current location by WID
+GET http://localhost:5000/users/wid/110/location
+Accept: application/json
+
+### Check if WID exists
+GET http://localhost:5000/users/wid/110/exists
+Accept: application/json
 
 ### Add a new user
 POST http://localhost:5000/users
@@ -49,8 +56,8 @@ Content-Type: application/json
 
 ###
 
-### Update user location by ID
-PUT http://localhost:5000/users/678c902d70e8348d2982832a/location
+### Update user location by WID
+PUT http://localhost:5000/users/wid/110/location
 Content-Type: application/json
 
 {
@@ -65,6 +72,16 @@ Content-Type: application/json
 
 {
   "Work_done": 3
+}
+
+###
+
+### Increment user work done by ID
+PUT http://localhost:5000/users/678c902d70e8348d2982832a/increment_work_done
+Content-Type: application/json
+
+{
+  "increment_value": 1
 }
 
 ###

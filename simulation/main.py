@@ -8,8 +8,12 @@ from utils.getblockpositions import getblockposi
 from utils.blockRoute import block_route_in_grid
 from utils.getbocktime import gettime
 from utils.checknearestblocks import check_nearest_blocks
+from utils.storework import send_work_data
+from utils.updateposition import update_user_location
+from utils.getworkerstartposition import get_user_location
+from datetime import datetime
 
-def run_simulation(start, goal, camcoordinates,type="small"):
+def runmap(start, goal, camcoordinates,type="small",wid=111):
     # File path to the grid layout
     file_path = 'simulation/grid_layout.txt'
 
@@ -27,6 +31,8 @@ def run_simulation(start, goal, camcoordinates,type="small"):
         mass = 2
     elif type == "large":
         mass = 3
+    elif type == "xlarge":
+        mass = 4    
 
     # # Define start and end points
     # start = (2, 1)  # Initial start position (row, col)
@@ -37,6 +43,8 @@ def run_simulation(start, goal, camcoordinates,type="small"):
     length_diff = 0
 
     while True:
+        # update_user_location(wid, start[0], start[1])
+
         coordinates_to_block = getblockposi()  # Coordinates to block (set to 1)
         copy = coordinates_to_block.copy()
         # print(f"coordinates_to_block 1   {coordinates_to_block}")
@@ -90,7 +98,12 @@ def run_simulation(start, goal, camcoordinates,type="small"):
         
 
         if start == goal:
-            print(f"work :{len(finalpath)*mass}")
+            current_date = datetime.now().strftime("%Y-%m-%d")
+            work_done = len(finalpath)*mass
+            response = send_work_data(wid, current_date, work_done)
+            update_user_location(wid, start[0], start[1])
+            print(response)
+            print(f"work :{work_done}")
             break
         else:
             finalpath.append(start)
@@ -99,10 +112,20 @@ def run_simulation(start, goal, camcoordinates,type="small"):
         last_length = path_length
 
         # Simulate delay for worker movement
-        time.sleep(1)
+        time.sleep(0.5)
 
-    # Close all OpenCV windows
+   
+
+def run_simulation(start, goal, camcoordinates,type="small",wid=111,n=1):
+    for i in range(n):
+        w_start= get_user_location(wid)
+        runmap(w_start, start, camcoordinates,"small",wid)
+        runmap(start, goal, camcoordinates,type,wid)
+         # Close all OpenCV windows
     cv2.destroyAllWindows()
+    return True
+
+
 
 
 if __name__ == "__main__":

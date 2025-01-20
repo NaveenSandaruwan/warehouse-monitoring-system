@@ -8,6 +8,6 @@ from menu import MainMenu
 
 if __name__ == '__main__':
     login_page = LoginPage()
-    login_page.run()
+    wid=login_page.run()
     app = MainMenu()
-    app.run()
+    app.run(wid)

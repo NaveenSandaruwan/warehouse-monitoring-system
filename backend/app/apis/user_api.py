@@ -61,6 +61,31 @@ def get_user_by_wid(wid):
             return jsonify({"error": "User not found"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+# Route: Get user current location by WID
+@user_api.route("/users/wid/<wid>/location", methods=["GET"])
+def get_user_location_by_wid(wid):
+    try:
+        user = users_collection.find_one({"wid": int(wid)}, {"current_location": 1, "_id": 0})
+        if user:
+            return jsonify(user)
+        else:
+            return jsonify({"error": "User not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+# Route: Check if WID exists
+@user_api.route("/users/wid/<wid>/exists", methods=["GET"])
+def check_wid_exists(wid):
+    try:
+        user = users_collection.find_one({"wid": int(wid)}, {"_id": 1})
+        if user:
+            return jsonify({"exists": True})
+        else:
+            return jsonify({"exists": False})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 # Route: Update a user
 @user_api.route("/users/<user_id>", methods=["PUT"])
@@ -84,12 +109,12 @@ def update_user(user_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Route: Update current location by ID
-@user_api.route("/users/<user_id>/location", methods=["PUT"])
-def update_user_location(user_id):
+# Route: Update current location by WID
+@user_api.route("/users/wid/<wid>/location", methods=["PUT"])
+def update_user_location_by_wid(wid):
     try:
         data = request.json
-        result = users_collection.update_one({"_id": ObjectId(user_id)}, {"$set": {"current_location": data["current_location"]}})
+        result = users_collection.update_one({"wid": int(wid)}, {"$set": {"current_location": data["current_location"]}})
         if result.modified_count > 0:
             return jsonify({"message": "User location updated successfully!"})
         else:

@@ -24,6 +24,7 @@ class MainMenu:
         self.quit_button = pygame.Rect(300, 400, 200, 50)
 
         self.running = True
+        self.wid=None
 
     def draw_menu(self):
         self.screen.fill(self.WHITE)
@@ -94,8 +95,14 @@ class MainMenu:
                             show_simulation = SimulationRunner()
                             start = tuple(map(int, task["start"].strip("()").split(',')))
                             goal = tuple(map(int, task["end"].strip("()").split(',')))
+                            itemsize=task["itemsize"]
+                            iterations =int (task["iterations"])
                             camcoordinates = [(1, 0), (13, 0)]
-                            show_simulation.run(start, goal, camcoordinates)
+                            # wid=110
+                            isdone =show_simulation.run(start, goal, camcoordinates, itemsize,self.wid,iterations)
+                            if isdone:
+                                print(task["_id"])
+                                self.delete_task(task["_id"])
                             running = False
                         y_offset += 40
 
@@ -120,6 +127,14 @@ class MainMenu:
             pygame.display.flip()
 
         self.draw_menu()
+    def delete_task(self,task_id):
+        url = f"http://localhost:5000/tasks/{task_id}"
+        headers = {
+            "Accept": "application/json"
+        }
+        response = requests.delete(url, headers=headers)
+        return response.json()
+    
 
     def map_window(self):
         sections = fetch_sections_and_locations()
@@ -158,7 +173,7 @@ class MainMenu:
                             goal_pos = (grid_y, grid_x)  # Reverse x and y
                             show_simulation = SimulationRunner()
                             camcoordinates = [(1, 0), (13, 0)]
-                            show_simulation.run(start_pos, goal_pos, camcoordinates)
+                            isdone =show_simulation.run(start_pos, goal_pos, camcoordinates, "small",self.wid,1) 
                             running = False
 
             self.screen.fill(self.WHITE)
@@ -187,7 +202,8 @@ class MainMenu:
 
         self.draw_menu()
 
-    def run(self):
+    def run(self,wid):
+        self.wid=wid
         while self.running:
             self.draw_menu()
             for event in pygame.event.get():
