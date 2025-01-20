@@ -4,6 +4,7 @@ Accept: application/json
 
 ###
 
+
 ### Get a user by ID
 GET http://localhost:5000/users/678c902d70e8348d2982832a
 Accept: application/json
