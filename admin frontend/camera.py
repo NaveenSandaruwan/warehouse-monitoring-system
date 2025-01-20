@@ -8,7 +8,7 @@ class CameraSystem:
 
     def start_camera_system(self):
         if self.process is None:
-            camprocess_main_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../warehouse-path-optimizing/camprocess/main.py'))
+            camprocess_main_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../camprocess/main.py'))
             if os.path.exists(camprocess_main_path):
                 self.process = subprocess.Popen(["python", camprocess_main_path], shell=True)
                 print("Started Camera System")
