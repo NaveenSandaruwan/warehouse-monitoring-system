@@ -46,6 +46,18 @@ def add_or_update_work():
         return jsonify({"message": "Work data added or updated successfully!"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+# Route: Get all work records
+@work_api.route("/works", methods=["GET"])
+def get_all_works():
+    try:
+        work_records = list(works_collection.find())
+        for work_record in work_records:
+            work_record["_id"] = str(work_record["_id"])  # Convert ObjectId to string
+        return jsonify(work_records), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+        
 
 # Route: Get work record by WID
 @work_api.route("/works/wid/<wid>", methods=["GET"])

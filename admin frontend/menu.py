@@ -23,7 +23,7 @@ class MainMenu:
                         self.selected_option = (self.selected_option + 1) % len(self.options)
                     elif event.key == pygame.K_RETURN:
                         if self.selected_option == 0:
-                            ReportGenerator().generate()
+                            ReportGenerator(self.screen).generate()
                         elif self.selected_option == 1:
                             CameraSystem().start()
                     elif event.key == pygame.K_ESCAPE:
@@ -35,12 +35,10 @@ class MainMenu:
                             text_rect = text_surface.get_rect(topleft=(100, 100 + i * 40))
                             if text_rect.collidepoint(event.pos):
                                 self.selected_option = i
-                                if event.type == pygame.MOUSEBUTTONDOWN:
-                                    if event.button == 1:  # Left mouse button
-                                        if self.selected_option == 0:
-                                            ReportGenerator().generate()
-                                        elif self.selected_option == 1:
-                                            CameraSystem().start()
+                                if self.selected_option == 0:
+                                    ReportGenerator(self.screen).generate()
+                                elif self.selected_option == 1:
+                                    CameraSystem().start()
 
             self.screen.fill((0, 0, 0))
             for i, option in enumerate(self.options):

@@ -11,8 +11,8 @@ from camera import CameraSystem
 pygame.init()
 
 # Screen dimensions
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 1500
+SCREEN_HEIGHT = 800
 
 # Create the main window
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
