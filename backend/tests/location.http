@@ -1,0 +1,41 @@
+### Get all locations
+GET http://localhost:5000/locations
+Accept: application/json
+
+###
+
+### Get a location by ID
+GET http://localhost:5000/locations/678a31f47bb2f69799c158f7
+Accept: application/json
+
+###
+
+### Add a new location
+POST http://localhost:5000/locations
+Content-Type: application/json
+
+{
+  "id": 10,
+  "name": "Section B",
+  "coordinates": "(20,10)",
+  "type": "aisle"
+}
+
+###
+
+### Update a location
+PUT http://localhost:5000/locations/678a31f47bb2f69799c158f7
+Content-Type: application/json
+
+{
+  "id": 2,
+  "name": "Section B Updated",
+  "coordinates": "(21,11)",
+  "type": "aisle"
+}
+
+###
+
+### Delete a location
+DELETE http://localhost:5000/locations/678a31f47bb2f69799c158f7
+Accept: application/json
