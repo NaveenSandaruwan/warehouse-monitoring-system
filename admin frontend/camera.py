@@ -1,26 +1,44 @@
-import subprocess
+import sys
 import os
 import pygame
 
-class CameraSystem:
+
+
+class CameraSystemInvoker:
     def __init__(self):
-        self.process = None
+        self.setup_paths()
+        self.camera_system = None  # Placeholder for the CameraSystem object
+        self.is_running = False
+        from camprocess.multiplecam_process import startCameraSystem, stopCameraSystem
+        self.startCameraSystem = startCameraSystem
+        self.stopCameraSystem = stopCameraSystem
+    def setup_paths(self):
+        # Add the parent directory to the Python path
+        parent_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+        if parent_path not in sys.path:
+            sys.path.append(parent_path)
+
+        # Add the camprocess directory to the Python path
+        camprocess_path = os.path.abspath(os.path.join(parent_path, 'camprocess'))
+        if camprocess_path not in sys.path:
+            sys.path.append(camprocess_path)
 
     def start_camera_system(self):
-        if self.process is None:
-            camprocess_main_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../camprocess/main.py'))
-            if os.path.exists(camprocess_main_path):
-                self.process = subprocess.Popen(["python", camprocess_main_path], shell=True)
-                print("Started Camera System")
-            else:
-                print(f"Error: {camprocess_main_path} does not exist")
+        if not self.is_running:
+            self.camera_system = self.startCameraSystem()  # Start the CameraSystem
+            self.is_running = True
+            print("Started Camera System")
+        else:
+            print("Camera System is already running")
 
     def stop_camera_system(self):
-        if self.process is not None:
-            self.process.terminate()
-            self.process.wait()
-            self.process = None
+        if self.is_running and self.camera_system:
+            self.stopCameraSystem(self.camera_system)  # Stop the CameraSystem
+            self.camera_system = None
+            self.is_running = False
             print("Stopped Camera System")
+        else:
+            print("Camera System is not running")
 
     def run(self):
         pygame.init()
@@ -29,33 +47,26 @@ class CameraSystem:
 
         font = pygame.font.Font(None, 36)
         buttons = [
-            {"label": "Start Camera ", "rect": pygame.Rect(100, 100, 200, 50), "action": "start"},
-            {"label": "Stop Camera ", "rect": pygame.Rect(350, 100, 200, 50), "action": "stop"},
+            {"label": "Start Camera", "rect": pygame.Rect(100, 100, 200, 50), "action": "start"},
+            {"label": "Stop Camera", "rect": pygame.Rect(350, 100, 200, 50), "action": "stop"},
         ]
 
         running = True
-        show_message = True
         while running:
-         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                # Instead of quitting, you can set a flag or call a method to go back to the previous page
-                running = False  # Set running to False to exit the current loop
-                # Add your code here to go back to the previous page
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                for button in buttons:
-                    if button["rect"].collidepoint(event.pos):
-                        if button["action"] == "start":
-                            self.start_camera_system()
-                        elif button["action"] == "stop":
-                            self.stop_camera_system()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                    running = False
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    for button in buttons:
+                        if button["rect"].collidepoint(event.pos):
+                            if button["action"] == "start":
+                                self.start_camera_system()
+                            elif button["action"] == "stop":
+                                self.stop_camera_system()
 
             screen.fill((30, 30, 30))
-            if show_message:
-                message_surface = font.render("Press ESC to go back", True, (255, 255, 255))
-                screen.blit(message_surface, (250, 50))
-
             for button in buttons:
                 pygame.draw.rect(screen, (0, 128, 255), button["rect"])
                 text_surface = font.render(button["label"], True, (255, 255, 255))
@@ -63,10 +74,10 @@ class CameraSystem:
 
             pygame.display.flip()
 
-
         self.stop_camera_system()
         pygame.quit()
 
+
 if __name__ == "__main__":
-    camera_system = CameraSystem()
+    camera_system = CameraSystemInvoker()
     camera_system.run()

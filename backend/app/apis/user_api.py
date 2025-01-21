@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from app.database import users_collection
+from app.database import users_collection, works_collection
 from bson.objectid import ObjectId
 
 # Create a Blueprint for the user API
@@ -158,5 +158,47 @@ def delete_user(user_id):
             return jsonify({"message": "User deleted successfully!"})
         else:
             return jsonify({"error": "User not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+
+
+# Route: Update work based on user coordinates
+@user_api.route("/users/update_work", methods=["PUT"])
+def update_work_by_coordinates():
+    try:
+        data = request.json
+        coordinates = data["coordinates"]
+        work_done = data["work_done"]
+        date = data["date"]
+
+        # Find the user by coordinates
+        user = users_collection.find_one({"current_location": coordinates})
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        wid = user["wid"]
+
+        # Check if a record for the worker exists
+        work_record = works_collection.find_one({"wid": wid})
+
+        if work_record:
+            # Check if the date already exists in the work array
+            work_exists = next((item for item in work_record["work"] if item["date"] == date), None)
+            if work_exists:
+                # Increment the work_done value for the existing date
+                works_collection.update_one(
+                    {"wid": wid, "work.date": date},
+                    {"$inc": {"work.$.work_done": work_done}}
+                )
+            else:
+                # Add a new date entry to the work array
+                works_collection.update_one(
+                    {"wid": wid},
+                    {"$push": {"work": {"date": date, "work_done": work_done}}}
+                )
+            return jsonify({"message": "Work data updated successfully!"}), 200
+        else:
+            return jsonify({"error": "Work record not found"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500

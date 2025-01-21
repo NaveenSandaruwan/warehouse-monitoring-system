@@ -89,3 +89,14 @@ Content-Type: application/json
 ### Delete a user
 DELETE http://localhost:5000/users/678c902d70e8348d2982832a
 Accept: application/json
+
+
+### Update work based on user coordinates
+PUT http://localhost:5000/users/update_work
+Content-Type: application/json
+
+{
+  "coordinates": "(15,16)",
+  "work_done": 5,
+  "date": "2025-01-21"
+}

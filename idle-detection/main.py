@@ -3,7 +3,8 @@ import numpy as np
 import time
 
 # Load pre-trained model and configuration file for person detection
-net = cv2.dnn.readNetFromCaffe('deploy.prototxt', 'mobilenet_iter_73000.caffemodel')
+net = cv2.dnn.readNetFromCaffe('E:/VS CODE/warehousing/idle-detection-2/idle-detection-2/deploy.prototxt', 
+                               'E:/VS CODE/warehousing/idle-detection-2/idle-detection-2/mobilenet_iter_73000.caffemodel')
 
 def process_video(video_path):
     cap = cv2.VideoCapture(video_path)
@@ -13,7 +14,7 @@ def process_video(video_path):
     # Desired dimensions
     desired_width = 640
     desired_height = 480
-
+    
     while True:
         ret, frame = cap.read()
         if not ret:
@@ -22,7 +23,7 @@ def process_video(video_path):
         # Resize the frame to the desired dimensions
         frame = cv2.resize(frame, (desired_width, desired_height))
         h, w = frame.shape[:2]
-
+        
         blob = cv2.dnn.blobFromImage(cv2.resize(frame, (300, 300)), 0.007843, (300, 300), 127.5)
         net.setInput(blob)
         detections = net.forward()
@@ -46,13 +47,13 @@ def process_video(video_path):
         for pos in current_positions:
             matched = False
             for pid, track in person_tracks.items():
-                if np.linalg.norm(np.array(pos) - np.array(track['position'])) < 50:  # Threshold for matching
+                if np.linalg.norm(np.array(pos) - np.array(track['position'])) < 100:  # Threshold for matching
                     track['position'] = pos
                     track['frames'] += 1
                     track['positions'].append(pos)
                     if len(track['positions']) > 10:  # Keep the last 10 positions
                         track['positions'].pop(0)
-                    if np.linalg.norm(np.array(pos) - np.array(track['positions'][0])) < 5: # Threshold for idle
+                    if np.linalg.norm(np.array(pos) - np.array(track['positions'][0])) < 20: # Threshold for idle
                         if track['idle_frames'] == 0:
                             track['idle_start_time'] = time.time()  # Record the start time of idle
                         track['idle_frames'] += 1
@@ -112,4 +113,4 @@ def process_video(video_path):
     print("All Persons tracked : ", person_tracks)
 
 if __name__ == "__main__":
-    process_video("standing-2.mp4")
+    process_video(r"idle-detection\jump.mp4")
