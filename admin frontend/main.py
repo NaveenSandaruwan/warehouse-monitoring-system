@@ -5,7 +5,7 @@ import json
 from login import LoginPage
 from menu import MainMenu
 from report import ReportGenerator
-from camera import CameraSystem
+from camera import CameraSystemInvoker
 
 # Initialize Pygame
 pygame.init()
