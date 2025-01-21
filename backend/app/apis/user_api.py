@@ -49,6 +49,18 @@ def get_user_by_id(user_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# Route: Get user type by WID
+@user_api.route("/users/wid/<wid>/type", methods=["GET"])
+def get_user_type_by_wid(wid):
+    try:
+        user = users_collection.find_one({"wid": int(wid)}, {"type": 1, "_id": 0})
+        if user:
+            return jsonify(user)
+        else:
+            return jsonify({"error": "User not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 # Route: Get a user by WID
 @user_api.route("/users/wid/<wid>", methods=["GET"])
 def get_user_by_wid(wid):

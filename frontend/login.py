@@ -47,16 +47,38 @@ class LoginPage:
         textrect.topleft = (x, y)
         surface.blit(textobj, textrect)
         
+    # def check_wid_exists(self, wid):
+    #     url = f"http://localhost:5000/users/wid/{wid}/exists"
+    #     headers = {
+    #         "Accept": "application/json"
+    #     }
+    #     response = requests.get(url, headers=headers)
+    #     if response.status_code == 200:
+    #         data = response.json()
+    #         return data.get("exists", False)
+    #     return False
     def check_wid_exists(self, wid):
-        url = f"http://localhost:5000/users/wid/{wid}/exists"
+        url = f"http://localhost:5000/users/wid/{wid}/type"
         headers = {
-            "Accept": "application/json"
+            "Accept": "application/json",
+            "Content-Type": "application/json"
         }
-        response = requests.get(url, headers=headers)
-        if response.status_code == 200:
-            data = response.json()
-            return data.get("exists", False)
-        return False
+        try:
+            response = requests.get(url, headers=headers)
+            if response.status_code == 200:
+                user_type = response.json()
+                print('User Type:', user_type)
+                return user_type
+            elif response.status_code == 404:
+                print('Error: User not found')
+                return False
+            else:
+                error = response.json()
+                print('Error:', error)
+                return False
+        except requests.exceptions.RequestException as error:
+            print('Network error:', error)
+            return False
 
     
     def run(self):
@@ -74,27 +96,29 @@ class LoginPage:
                     self.color = self.color_active if self.active else self.color_inactive
 
                     if self.button.collidepoint(event.pos):
-                        if self.check_wid_exists(int(self.text)):
-                            self.wid=self.text
-                            print(f"Username entered: {self.text}")
+                        user_type = self.check_wid_exists(int(self.text))
+                        if user_type:
+                            self.wid = self.text
+                            print(f"User ID entered: {self.text}")
                             self.error_message = ''
-                            return int(self.wid)
+                            return [int(self.wid), user_type]
                             running = False  # Exit the run function
                         else:
-                            self.error_message = 'Username not found'
+                            self.error_message = 'User ID not found'
                         self.text = ''  # Clear the input box
 
                 if event.type == pygame.KEYDOWN:
                     if self.active:
                         if event.key == pygame.K_RETURN:
-                            if self.check_wid_exists(int(self.text)):
-                                self.wid=self.text
-                                print(f"Username entered: {self.text}")
+                            user_type = self.check_wid_exists(int(self.text))
+                            if user_type:
+                                self.wid = self.text
+                                print(f"User ID entered: {self.text}")
                                 self.error_message = ''
-                                return int(self.wid)
+                                return int(self.wid), user_type
                                 running = False  # Exit the run function
                             else:
-                                self.error_message = 'Username not found'
+                                self.error_message = 'User ID not found'
                             self.text = ''  # Clear the input box
                         elif event.key == pygame.K_BACKSPACE:
                             self.text = self.text[:-1]
@@ -102,7 +126,7 @@ class LoginPage:
                             self.text += event.unicode
 
             self.screen.fill(self.white)
-            self.draw_text('Username:', self.font, self.black, self.screen, 200, 220)  # Adjusted y position
+            self.draw_text('User ID:', self.font, self.black, self.screen, 200, 220)  # Adjusted y position
             txt_surface = self.font.render(self.text, True, self.color)
             width = max(200, txt_surface.get_width() + 10)
             self.input_box.w = width

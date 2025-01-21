@@ -30,7 +30,7 @@ class MainMenu:
     def draw_menu(self):
         self.screen.fill(self.WHITE)
         mouse_pos = pygame.mouse.get_pos()
-
+        # print(self.type)    
         if self.type == "forklift":
             tasks_button_color = self.LIGHT_BLUE if self.tasks_button.collidepoint(mouse_pos) else self.BLACK
             pygame.draw.rect(self.screen, tasks_button_color, self.tasks_button)
@@ -206,8 +206,8 @@ class MainMenu:
         self.draw_menu()
 
     def run(self,user):
-        self.wid=user["wid"]
-        self.type=user["type"]
+        self.wid=user[0]
+        self.type=user[1]["type"]
         while self.running:
             self.draw_menu()
             for event in pygame.event.get():
