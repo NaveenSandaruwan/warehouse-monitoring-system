@@ -9,17 +9,14 @@ net = cv2.dnn.readNetFromCaffe('E:/VS CODE/warehousing/idle-detection-2/idle-det
 
 def update_db(person_tracks):
     while True:
-
+        print(person_tracks)
         print("Updating database with person tracks...")
         # Add code to update the database with the person tracks
         print("Database updated.")
         for pid, track in person_tracks.items():
            posi= track['positions'] 
            idle_time = time.time() - track['idle_start_time'] if track['idle_start_time'] else 0
-
-
-
-        print(person_tracks)
+        # print(f"Person ID: {pid}, Position: {track['position']}, Frames: {track['frames']}, Idle Time: {idle_time:.2f}s, Section: {track['section']}")        
         time.sleep(1)  # Update the database every 5 seconds
 
 def process_video(video_path, person_tracks):
