@@ -30,25 +30,28 @@ class MainMenu:
         self.screen.fill(self.WHITE)
         mouse_pos = pygame.mouse.get_pos()
 
-        tasks_button_color = self.LIGHT_BLUE if self.tasks_button.collidepoint(mouse_pos) else self.BLACK
+        # Conditionally render the Tasks button
+        if self.wid and self.wid.lower().startswith("f"):
+            tasks_button_color = self.LIGHT_BLUE if self.tasks_button.collidepoint(mouse_pos) else self.BLACK
+            pygame.draw.rect(self.screen, tasks_button_color, self.tasks_button)
+            tasks_text = self.font.render("Tasks", True, self.WHITE)
+            self.screen.blit(
+                tasks_text,
+                (
+                    self.tasks_button.centerx - tasks_text.get_width() // 2,
+                    self.tasks_button.centery - tasks_text.get_height() // 2,
+                ),
+            )
+
         map_button_color = self.LIGHT_BLUE if self.map_button.collidepoint(mouse_pos) else self.BLACK
         quit_button_color = self.LIGHT_BLUE if self.quit_button.collidepoint(mouse_pos) else self.BLACK
 
-        pygame.draw.rect(self.screen, tasks_button_color, self.tasks_button)
         pygame.draw.rect(self.screen, map_button_color, self.map_button)
         pygame.draw.rect(self.screen, quit_button_color, self.quit_button)
 
-        tasks_text = self.font.render("Tasks", True, self.WHITE)
         map_text = self.font.render("Map", True, self.WHITE)
         quit_text = self.font.render("Quit", True, self.WHITE)
 
-        self.screen.blit(
-            tasks_text,
-            (
-                self.tasks_button.centerx - tasks_text.get_width() // 2,
-                self.tasks_button.centery - tasks_text.get_height() // 2,
-            ),
-        )
         self.screen.blit(
             map_text,
             (
@@ -241,4 +244,4 @@ grid = read_grid_layout('../simulation/grid_layout.txt')
 
 if __name__ == "__main__":
     main_menu = MainMenu()
-    main_menu.run()
+    main_menu.run("F111")

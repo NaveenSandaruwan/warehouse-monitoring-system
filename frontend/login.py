@@ -77,7 +77,7 @@ class LoginPage:
                             self.wid=self.text
                             print(f"Username entered: {self.text}")
                             self.error_message = ''
-                            return int(self.wid)
+                            return self.wid
                             running = False  # Exit the run function
                         else:
                             self.error_message = 'Username not found'
