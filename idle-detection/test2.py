@@ -2,6 +2,9 @@ import cv2
 import numpy as np
 import time
 from threading import Thread, Lock
+import requests
+import datetime
+
 
 # Load pre-trained model and configuration file for person detection
 net = cv2.dnn.readNetFromCaffe('E:/VS CODE/warehousing/idle-detection-2/idle-detection-2/deploy.prototxt', 
@@ -12,30 +15,59 @@ class PersonTracker:
         self.video_path = video_path
         self.person_tracks = {}
         self.lock = Lock()
+        self.is_running = True
         self.net = cv2.dnn.readNetFromCaffe(
             'E:/VS CODE/warehousing/idle-detection-2/idle-detection-2/deploy.prototxt',
             'E:/VS CODE/warehousing/idle-detection-2/idle-detection-2/mobilenet_iter_73000.caffemodel'
         )
-        self.matrix =[[(1,1), (1,2), (1,4)]]
+        self.matrix =[[(3,4), (3,5), (3,6)]]
 
     def update_db(self):
+        current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+    
         while True:
             with self.lock:
                 print("Updating database with person tracks...")
                 # Add code to update the database with the person tracks
                 print("Database updated.")
                 for pid, track in self.person_tracks.items():
-                    posi = track['positions']
+                    posi = track['section']
+                    created_at = track['created_at']
+                    time_elapsed = time.time() - created_at
                     idle_time = time.time() - track['idle_start_time'] if track['idle_start_time'] else 0
-                    print(f"Person ID {pid}: Position {posi}, Idle Time {idle_time}")
+                    not_idle_time = time_elapsed - idle_time
+                    coordinates = f"({posi[0]},{posi[1]})"
+                    print(f"Person ID {pid}: Position {coordinates},not Idle  {not_idle_time}")
 
-                print(self.person_tracks)
+                    
+                    url = "http://localhost:5000/users/update_work"
+                    headers = {
+                        "Content-Type": "application/json"
+                    }
+                    
+                    # Create the payload
+                    payload = {
+                        "coordinates": coordinates,
+                        "work_done": not_idle_time,
+                        "date": current_date
+                    }
+                    
+                    # Send the PUT request
+                    response = requests.put(url, json=payload, headers=headers)
+                    
+                    # Print the response
+                    print(response.status_code)
+                    print(response.json())
+
+                # print(self.person_tracks)
+                if not self.is_running:
+                    break
             time.sleep(5)  # Update the database every 5 seconds
 
     def process_video(self):
         cap = cv2.VideoCapture(self.video_path)
         person_id = 0
-
+        self.is_running = True
         # Desired dimensions
         desired_width = 640
         desired_height = 480
@@ -120,7 +152,7 @@ class PersonTracker:
 
             # Draw bounding boxes and labels
             for pid, track in self.person_tracks.items():
-                print(len(self.person_tracks))
+                # print(len(self.person_tracks))
                 (startX, startY, endX, endY) = track['position']
                 # Ensure coordinates are within bounds
                 startX = max(0, min(startX, w - 1))
@@ -171,6 +203,7 @@ class PersonTracker:
 
             # Break the loop if 'q' is pressed
             if cv2.waitKey(1) & 0xFF == ord('q'):
+                self.is_running = False
                 break
 
         cap.release()
@@ -186,6 +219,8 @@ class PersonTracker:
 
         video_thread.join()
         db_thread.join()
+
+
 
 if __name__ == "__main__":
     tracker = PersonTracker(r"idle-detection\jump.mp4")
