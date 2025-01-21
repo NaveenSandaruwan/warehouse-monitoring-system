@@ -18,6 +18,7 @@ class MainMenu:
         self.GRAY = (169, 169, 169)  # Color for walls
 
         self.font = pygame.font.Font(None, 36)
+        self.type = None
 
         self.tasks_button = pygame.Rect(300, 200, 200, 50)
         self.map_button = pygame.Rect(300, 300, 200, 50)
@@ -30,8 +31,7 @@ class MainMenu:
         self.screen.fill(self.WHITE)
         mouse_pos = pygame.mouse.get_pos()
 
-        # Conditionally render the Tasks button
-        if self.wid and self.wid.lower().startswith("f"):
+        if self.type == "forklift":
             tasks_button_color = self.LIGHT_BLUE if self.tasks_button.collidepoint(mouse_pos) else self.BLACK
             pygame.draw.rect(self.screen, tasks_button_color, self.tasks_button)
             tasks_text = self.font.render("Tasks", True, self.WHITE)
@@ -205,8 +205,9 @@ class MainMenu:
 
         self.draw_menu()
 
-    def run(self,wid):
-        self.wid=wid
+    def run(self,user):
+        self.wid=user["wid"]
+        self.type=user["type"]
         while self.running:
             self.draw_menu()
             for event in pygame.event.get():
@@ -244,4 +245,4 @@ grid = read_grid_layout('../simulation/grid_layout.txt')
 
 if __name__ == "__main__":
     main_menu = MainMenu()
-    main_menu.run("F111")
+    main_menu.run()

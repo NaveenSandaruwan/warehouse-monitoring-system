@@ -58,6 +58,7 @@ class LoginPage:
             return data.get("exists", False)
         return False
 
+    
     def run(self):
         running = True
         while running:
@@ -77,7 +78,7 @@ class LoginPage:
                             self.wid=self.text
                             print(f"Username entered: {self.text}")
                             self.error_message = ''
-                            return self.wid
+                            return int(self.wid)
                             running = False  # Exit the run function
                         else:
                             self.error_message = 'Username not found'
