@@ -1,17 +1,13 @@
 import pygame
 import sys
-import os
-import json
 from login import LoginPage
 from menu import MainMenu
-from report import ReportGenerator
-from camera import CameraSystemInvoker
 
 # Initialize Pygame
 pygame.init()
 
 # Screen dimensions
-SCREEN_WIDTH = 1500
+SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
 
 # Create the main window

@@ -2,8 +2,6 @@ import sys
 import os
 import pygame
 
-
-
 class CameraSystemInvoker:
     def __init__(self):
         self.setup_paths()
@@ -12,6 +10,7 @@ class CameraSystemInvoker:
         from camprocess.multiplecam_process import startCameraSystem, stopCameraSystem
         self.startCameraSystem = startCameraSystem
         self.stopCameraSystem = stopCameraSystem
+
     def setup_paths(self):
         # Add the parent directory to the Python path
         parent_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -42,13 +41,18 @@ class CameraSystemInvoker:
 
     def run(self):
         pygame.init()
-        screen = pygame.display.set_mode((800, 600))
+        screen = pygame.display.set_mode((1200, 800))
         pygame.display.set_caption("Camera Control")
+
+        # Load background image
+        background = pygame.image.load("admin frontend/warehouse1.jpg").convert()
 
         font = pygame.font.Font(None, 36)
         buttons = [
-            {"label": "Start Camera", "rect": pygame.Rect(100, 100, 200, 50), "action": "start"},
-            {"label": "Stop Camera", "rect": pygame.Rect(350, 100, 200, 50), "action": "stop"},
+            {"label": "Start Block Detection Camera", "rect": pygame.Rect(100, 100, 400, 70), "action": "start"},
+            {"label": "Stop Block Detection Camera", "rect": pygame.Rect(550, 100, 400, 70), "action": "stop"},
+            {"label": "Start Idle Detection Camera", "rect": pygame.Rect(100, 200, 400, 70), "action": "start_idle"},
+            {"label": "Stop Idle Detection Camera", "rect": pygame.Rect(550, 200, 400, 70), "action": "stop_idle"},
         ]
 
         running = True
@@ -66,7 +70,7 @@ class CameraSystemInvoker:
                             elif button["action"] == "stop":
                                 self.stop_camera_system()
 
-            screen.fill((30, 30, 30))
+            screen.blit(background, (0, 0))  # Draw the background image
             for button in buttons:
                 pygame.draw.rect(screen, (0, 128, 255), button["rect"])
                 text_surface = font.render(button["label"], True, (255, 255, 255))
@@ -76,7 +80,6 @@ class CameraSystemInvoker:
 
         self.stop_camera_system()
         pygame.quit()
-
 
 if __name__ == "__main__":
     camera_system = CameraSystemInvoker()

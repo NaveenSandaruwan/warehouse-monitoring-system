@@ -2,14 +2,16 @@ import pygame
 from report import ReportGenerator
 from camera import CameraSystemInvoker
 
-
 class MainMenu:
     def __init__(self, screen):
         self.screen = screen
         self.clock = pygame.time.Clock()
         self.font = pygame.font.Font(None, 36)
-        self.options = ["Generate Report", "Start Camera System"]
+        self.options = ["Generate Report", "Start Camera System", "Idle Detection", "Exit"]
         self.selected_option = 0
+
+        # Load background image
+        self.background = pygame.image.load("admin frontend/warehouse1.jpg").convert()
 
     def run(self):
         running = True
@@ -27,6 +29,9 @@ class MainMenu:
                             ReportGenerator(self.screen).generate()
                         elif self.selected_option == 1:
                             CameraSystemInvoker().run()
+                        
+                        elif self.selected_option == 2:
+                            running = False
                     elif event.key == pygame.K_ESCAPE:
                         running = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -40,8 +45,11 @@ class MainMenu:
                                     ReportGenerator(self.screen).generate()
                                 elif self.selected_option == 1:
                                     CameraSystemInvoker().run()
+                                
+                                elif self.selected_option == 2:
+                                    running = False
 
-            self.screen.fill((0, 0, 0))
+            self.screen.blit(self.background, (0, 0))  # Draw the background image
             for i, option in enumerate(self.options):
                 color = (255, 255, 255) if i == self.selected_option else (100, 100, 100)
                 text_surface = self.font.render(option, True, color)

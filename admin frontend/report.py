@@ -10,6 +10,9 @@ class ReportGenerator:
         self.options = ["Worker Report", "Task Assigned Report", "Daily Report"]
         self.selected_option = 0
 
+        # Load background image
+        self.background = pygame.image.load("admin frontend/warehouse1.jpg").convert()
+
     def generate(self):
         running = True
         while running:
@@ -44,7 +47,7 @@ class ReportGenerator:
                                 elif self.selected_option == 2:
                                     self.generate_daily_report()
 
-            self.screen.fill((0, 0, 0))
+            self.screen.blit(self.background, (0, 0))  # Draw the background image
             for i, option in enumerate(self.options):
                 color = (255, 255, 255) if i == self.selected_option else (100, 100, 100)
                 text_surface = self.font.render(option, True, color)
@@ -78,7 +81,7 @@ class ReportGenerator:
                         if event.key == pygame.K_ESCAPE:
                             running = False
 
-                self.screen.fill((0, 0, 0))
+                self.screen.blit(self.background, (0, 0))  # Draw the background image
 
                 # Display the grid headers
                 headers = ["Worker Name", "Type", "Current Location", "Status", "Total Work Done"]
@@ -126,7 +129,7 @@ class ReportGenerator:
                         if event.key == pygame.K_ESCAPE:
                             running = False
 
-                self.screen.fill((0, 0, 0))
+                self.screen.blit(self.background, (0, 0))  # Draw the background image
 
                 # Display the grid headers for occupied tasks
                 headers = ["Task Description", "Status", "Created At", "Start Location", "End Location", "Updated At", "Item Size", "Iterations"]
@@ -186,7 +189,7 @@ class ReportGenerator:
                     if event.key == pygame.K_ESCAPE:
                         running = False
 
-            self.screen.fill((0, 0, 0))
+            self.screen.blit(self.background, (0, 0))  # Draw the background image
             report_text = self.font.render("Daily Report", True, (255, 255, 255))
             self.screen.blit(report_text, (100, 100))
 
