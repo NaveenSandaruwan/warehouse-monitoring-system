@@ -12,6 +12,8 @@ class ReportGenerator:
 
         # Load background image
         self.background = pygame.image.load("admin frontend/warehouse1.jpg").convert()
+        self.background = pygame.transform.smoothscale(self.background, (self.screen.get_width() // 10, self.screen.get_height() // 10))
+        self.background = pygame.transform.smoothscale(self.background, (self.screen.get_width(), self.screen.get_height()))
 
     def generate(self):
         running = True
@@ -47,11 +49,15 @@ class ReportGenerator:
                                 elif self.selected_option == 2:
                                     self.generate_daily_report()
 
-            self.screen.blit(self.background, (0, 0))  # Draw the background image
+            self.screen.blit(self.background, (0, 0))  # Draw the blurred background image
             for i, option in enumerate(self.options):
-                color = (255, 255, 255) if i == self.selected_option else (100, 100, 100)
-                text_surface = self.font.render(option, True, color)
-                self.screen.blit(text_surface, (100, 100 + i * 40))
+                text_surface = self.font.render(option, True, (255, 0, 0))
+                if i == self.selected_option:
+                    text_surface = pygame.transform.scale(text_surface, (int(text_surface.get_width() * 1.5), int(text_surface.get_height() * 1.5)))
+                if i == self.selected_option:
+                    text_surface = pygame.transform.scale(text_surface, (text_surface.get_width() * 1.2, text_surface.get_height() * 1.2))
+                text_rect = text_surface.get_rect(center=(self.screen.get_width() // 2, self.screen.get_height() // 2 - len(self.options) * 20 + i * 40))
+                self.screen.blit(text_surface, text_rect)
 
             pygame.display.flip()
             self.clock.tick(30)

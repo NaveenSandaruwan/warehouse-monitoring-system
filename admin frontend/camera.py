@@ -48,12 +48,27 @@ class CameraSystemInvoker:
         background = pygame.image.load("admin frontend/warehouse1.jpg").convert()
 
         font = pygame.font.Font(None, 36)
+        button_width = 400
+        button_height = 70
+        button_spacing = 20  # Space between buttons
+
+        # Calculate the starting y position to center the buttons vertically
+        total_height = (button_height + button_spacing) * 4 - button_spacing
+        start_y = (screen.get_height() - total_height) // 2
+
         buttons = [
-            {"label": "Start Block Detection Camera", "rect": pygame.Rect(100, 100, 400, 70), "action": "start"},
-            {"label": "Stop Block Detection Camera", "rect": pygame.Rect(550, 100, 400, 70), "action": "stop"},
-            {"label": "Start Idle Detection Camera", "rect": pygame.Rect(100, 200, 400, 70), "action": "start_idle"},
-            {"label": "Stop Idle Detection Camera", "rect": pygame.Rect(550, 200, 400, 70), "action": "stop_idle"},
+            {"label": "Start Block Detection Camera", "rect": pygame.Rect((screen.get_width() - button_width) // 2, start_y + i * (button_height + button_spacing), button_width, button_height), "action": "start"} for i in range(4)
         ]
+
+        # Update button labels and actions
+        buttons[0]["label"] = "Start Block Detection Camera"
+        buttons[0]["action"] = "start"
+        buttons[1]["label"] = "Stop Block Detection Camera"
+        buttons[1]["action"] = "stop"
+        buttons[2]["label"] = "Start Idle Detection Camera"
+        buttons[2]["action"] = "start_idle"
+        buttons[3]["label"] = "Stop Idle Detection Camera"
+        buttons[3]["action"] = "stop_idle"
 
         running = True
         while running:
@@ -74,7 +89,8 @@ class CameraSystemInvoker:
             for button in buttons:
                 pygame.draw.rect(screen, (0, 128, 255), button["rect"])
                 text_surface = font.render(button["label"], True, (255, 255, 255))
-                screen.blit(text_surface, (button["rect"].x + 10, button["rect"].y + 10))
+                text_rect = text_surface.get_rect(center=button["rect"].center)
+                screen.blit(text_surface, text_rect)
 
             pygame.display.flip()
 
