@@ -22,6 +22,8 @@ class MainMenu:
         self.ORANGE = (255, 165, 0)
         self.LIGHT_ORANGE = (255, 200, 100)
         self.GRAY = (169, 169, 169)  # Color for walls
+        self.BLUE = (0, 0, 255)
+        self.LIGHT_BLUE = (173, 216, 230)
 
         self.font = pygame.font.Font(None, 36)
         self.type = None
