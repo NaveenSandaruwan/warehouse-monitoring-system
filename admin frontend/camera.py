@@ -10,8 +10,10 @@ class CameraSystemInvoker:
         self.camera_system = None  # Placeholder for the CameraSystem object
         self.is_running = False
         from camprocess.multiplecam_process import startCameraSystem, stopCameraSystem
+        from idle_detection.test2 import idle_detection_start
         self.startCameraSystem = startCameraSystem
         self.stopCameraSystem = stopCameraSystem
+        self.startIdleDetector = idle_detection_start
     def setup_paths(self):
         # Add the parent directory to the Python path
         parent_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -22,10 +24,15 @@ class CameraSystemInvoker:
         camprocess_path = os.path.abspath(os.path.join(parent_path, 'camprocess'))
         if camprocess_path not in sys.path:
             sys.path.append(camprocess_path)
+        idle_detector_path = os.path.abspath(os.path.join(parent_path, 'idle_detection'))
+        if idle_detector_path not in sys.path:
+            sys.path.append(idle_detector_path)
+
 
     def start_camera_system(self):
         if not self.is_running:
             self.camera_system = self.startCameraSystem()  # Start the CameraSystem
+            self.startIdleDetector()
             self.is_running = True
             print("Started Camera System")
         else:
