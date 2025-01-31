@@ -227,7 +227,7 @@ class PersonTracker:
 
 
 def idle_detection_start():
-    tracker = PersonTracker(r"C:\Users\MSI20\Desktop\workers\7464110-hd_1080_1920_30fps.mp4")
+    tracker = PersonTracker(r"C:\Users\MSI20\Desktop\workers\6170600-uhd_2160_3840_25fps.mp4")
     tracker.run()
     # return tracker
 
