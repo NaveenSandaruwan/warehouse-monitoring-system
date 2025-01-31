@@ -32,7 +32,7 @@ class CameraSystemInvoker:
     def start_camera_system(self):
         if not self.is_running:
             self.camera_system = self.startCameraSystem()  # Start the CameraSystem
-            self.startIdleDetector()
+            # self.startIdleDetector()
             self.is_running = True
             print("Started Camera System")
         else:
