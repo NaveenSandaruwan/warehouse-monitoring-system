@@ -2,8 +2,6 @@ import sys
 import os
 import pygame
 
-
-
 class CameraSystemInvoker:
     def __init__(self):
         self.setup_paths()
@@ -13,7 +11,7 @@ class CameraSystemInvoker:
         from idle_detection.test2 import idle_detection_start
         self.startCameraSystem = startCameraSystem
         self.stopCameraSystem = stopCameraSystem
-        self.startIdleDetector = idle_detection_start
+
     def setup_paths(self):
         # Add the parent directory to the Python path
         parent_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -49,14 +47,34 @@ class CameraSystemInvoker:
 
     def run(self):
         pygame.init()
-        screen = pygame.display.set_mode((800, 600))
+        screen = pygame.display.set_mode((1200, 800))
         pygame.display.set_caption("Camera Control")
 
+        # Load background image
+        background = pygame.image.load("admin frontend/warehouse1.jpg").convert()
+
         font = pygame.font.Font(None, 36)
+        button_width = 400
+        button_height = 70
+        button_spacing = 20  # Space between buttons
+
+        # Calculate the starting y position to center the buttons vertically
+        total_height = (button_height + button_spacing) * 4 - button_spacing
+        start_y = (screen.get_height() - total_height) // 2
+
         buttons = [
-            {"label": "Start Camera", "rect": pygame.Rect(100, 100, 200, 50), "action": "start"},
-            {"label": "Stop Camera", "rect": pygame.Rect(350, 100, 200, 50), "action": "stop"},
+            {"label": "Start Block Detection Camera", "rect": pygame.Rect((screen.get_width() - button_width) // 2, start_y + i * (button_height + button_spacing), button_width, button_height), "action": "start"} for i in range(4)
         ]
+
+        # Update button labels and actions
+        buttons[0]["label"] = "Start Block Detection Camera"
+        buttons[0]["action"] = "start"
+        buttons[1]["label"] = "Stop Block Detection Camera"
+        buttons[1]["action"] = "stop"
+        buttons[2]["label"] = "Start Idle Detection Camera"
+        buttons[2]["action"] = "start_idle"
+        buttons[3]["label"] = "Stop Idle Detection Camera"
+        buttons[3]["action"] = "stop_idle"
 
         running = True
         while running:
@@ -73,17 +91,17 @@ class CameraSystemInvoker:
                             elif button["action"] == "stop":
                                 self.stop_camera_system()
 
-            screen.fill((30, 30, 30))
+            screen.blit(background, (0, 0))  # Draw the background image
             for button in buttons:
                 pygame.draw.rect(screen, (0, 128, 255), button["rect"])
                 text_surface = font.render(button["label"], True, (255, 255, 255))
-                screen.blit(text_surface, (button["rect"].x + 10, button["rect"].y + 10))
+                text_rect = text_surface.get_rect(center=button["rect"].center)
+                screen.blit(text_surface, text_rect)
 
             pygame.display.flip()
 
         self.stop_camera_system()
         pygame.quit()
-
 
 if __name__ == "__main__":
     camera_system = CameraSystemInvoker()
