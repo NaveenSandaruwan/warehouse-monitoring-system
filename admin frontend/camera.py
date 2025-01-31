@@ -8,9 +8,10 @@ class CameraSystemInvoker:
         self.camera_system = None  # Placeholder for the CameraSystem object
         self.is_running = False
         from camprocess.multiplecam_process import startCameraSystem, stopCameraSystem
-        from idle_detection.test2 import idle_detection_start
+        from idle_detection.test import idle_detection_start
         self.startCameraSystem = startCameraSystem
         self.stopCameraSystem = stopCameraSystem
+        self.startIdleDetector = idle_detection_start
 
     def setup_paths(self):
         # Add the parent directory to the Python path
@@ -26,6 +27,8 @@ class CameraSystemInvoker:
         if idle_detector_path not in sys.path:
             sys.path.append(idle_detector_path)
 
+    def startIdelDetector(self):
+        self.startIdleDetector()
 
     def start_camera_system(self):
         if not self.is_running:
@@ -90,6 +93,10 @@ class CameraSystemInvoker:
                                 self.start_camera_system()
                             elif button["action"] == "stop":
                                 self.stop_camera_system()
+                            elif button["action"] == "start_idle":
+                                self.startIdelDetector()
+
+                            
 
             screen.blit(background, (0, 0))  # Draw the background image
             for button in buttons:

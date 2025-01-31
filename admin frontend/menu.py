@@ -14,6 +14,7 @@ class MainMenu:
 
         # Load and blur background image using OpenCV
         background_image = cv2.imread("admin frontend/warehouse1.jpg")
+        
         blurred_image = cv2.GaussianBlur(background_image, (21, 21), 0)
 
         # Convert the blurred image to a format Pygame can use
