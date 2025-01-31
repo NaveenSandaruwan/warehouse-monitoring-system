@@ -11,11 +11,19 @@ class MainMenu:
         self.screen = pygame.display.set_mode((800, 600))
         pygame.display.set_caption("Main Menu")
 
+        # Load the background images
+        self.background_image = pygame.image.load("iron-steel-material-storage.jpg")
+        self.background_image = pygame.transform.scale(self.background_image, (800, 600))  # Scale to fit window
+        self.tasks_background_image = pygame.image.load("warehouse_05.jpg")  # Load the new image
+        self.tasks_background_image = pygame.transform.scale(self.tasks_background_image, (800, 600))  # Scale to fit window
+
         self.WHITE = (255, 255, 255)
         self.BLACK = (0, 0, 0)
+        self.ORANGE = (255, 165, 0)
+        self.LIGHT_ORANGE = (255, 200, 100)
+        self.GRAY = (169, 169, 169)  # Color for walls
         self.BLUE = (0, 0, 255)
         self.LIGHT_BLUE = (173, 216, 230)
-        self.GRAY = (169, 169, 169)  # Color for walls
 
         self.font = pygame.font.Font(None, 36)
         self.type = None
@@ -25,14 +33,14 @@ class MainMenu:
         self.quit_button = pygame.Rect(300, 400, 200, 50)
 
         self.running = True
-        self.wid=None
+        self.wid = None
 
     def draw_menu(self):
-        self.screen.fill(self.WHITE)
+        self.screen.blit(self.background_image, (0, 0))  # Draw background image
         mouse_pos = pygame.mouse.get_pos()
-        # print(self.type)    
+
         if self.type == "forklift":
-            tasks_button_color = self.LIGHT_BLUE if self.tasks_button.collidepoint(mouse_pos) else self.BLACK
+            tasks_button_color = self.LIGHT_ORANGE if self.tasks_button.collidepoint(mouse_pos) else self.ORANGE
             pygame.draw.rect(self.screen, tasks_button_color, self.tasks_button)
             tasks_text = self.font.render("Tasks", True, self.WHITE)
             self.screen.blit(
@@ -43,8 +51,8 @@ class MainMenu:
                 ),
             )
 
-        map_button_color = self.LIGHT_BLUE if self.map_button.collidepoint(mouse_pos) else self.BLACK
-        quit_button_color = self.LIGHT_BLUE if self.quit_button.collidepoint(mouse_pos) else self.BLACK
+        map_button_color = self.LIGHT_ORANGE if self.map_button.collidepoint(mouse_pos) else self.ORANGE
+        quit_button_color = self.LIGHT_ORANGE if self.quit_button.collidepoint(mouse_pos) else self.ORANGE
 
         pygame.draw.rect(self.screen, map_button_color, self.map_button)
         pygame.draw.rect(self.screen, quit_button_color, self.quit_button)
@@ -98,18 +106,21 @@ class MainMenu:
                             show_simulation = SimulationRunner()
                             start = tuple(map(int, task["start"].strip("()").split(',')))
                             goal = tuple(map(int, task["end"].strip("()").split(',')))
-                            itemsize=task["itemsize"]
-                            iterations =int (task["iterations"])
+                            itemsize = task["itemsize"]
+                            iterations = int(task["iterations"])
                             camcoordinates = [(1, 0), (13, 0)]
-                            # wid=110
-                            isdone =show_simulation.run(start, goal, camcoordinates, itemsize,self.wid,iterations)
+                            isdone = show_simulation.run(start, goal, camcoordinates, itemsize, self.wid, iterations)
                             if isdone:
                                 print(task["_id"])
                                 self.delete_task(task["_id"])
                             running = False
                         y_offset += 40
 
-            self.screen.fill(self.WHITE)
+            # Blur the new background image
+            blurred_background = pygame.transform.smoothscale(self.tasks_background_image, (80, 60))
+            blurred_background = pygame.transform.smoothscale(blurred_background, (800, 600))
+            self.screen.blit(blurred_background, (0, 0))  # Draw the blurred background image
+
             title_text = self.font.render(
                 "Unoccupied Tasks - Press ESC to return", True, self.BLACK
             )
@@ -130,14 +141,14 @@ class MainMenu:
             pygame.display.flip()
 
         self.draw_menu()
-    def delete_task(self,task_id):
+
+    def delete_task(self, task_id):
         url = f"http://localhost:5000/tasks/{task_id}"
         headers = {
             "Accept": "application/json"
         }
         response = requests.delete(url, headers=headers)
         return response.json()
-    
 
     def map_window(self):
         sections = fetch_sections_and_locations()
@@ -176,10 +187,10 @@ class MainMenu:
                             goal_pos = (grid_y, grid_x)  # Reverse x and y
                             show_simulation = SimulationRunner()
                             camcoordinates = [(1, 0), (13, 0)]
-                            isdone =show_simulation.run(start_pos, goal_pos, camcoordinates, "small",self.wid,1) 
+                            isdone = show_simulation.run(start_pos, goal_pos, camcoordinates, "small", self.wid, 1)
                             running = False
 
-            self.screen.fill(self.WHITE)
+            self.screen.fill(self.WHITE)  # Clear screen with white background
             pygame.display.set_caption("Select Start and Goal - Press ESC to return")
 
             for x in range(grid_size):
@@ -205,9 +216,9 @@ class MainMenu:
 
         self.draw_menu()
 
-    def run(self,user):
-        self.wid=user[0]
-        self.type=user[1]["type"]
+    def run(self, user):
+        self.wid = user[0]
+        self.type = user[1]["type"]
         while self.running:
             self.draw_menu()
             for event in pygame.event.get():
@@ -223,7 +234,6 @@ class MainMenu:
 
         pygame.quit()
         sys.exit()
-
 
 def read_grid_layout(file_path):
     # Ensure the file path is correct

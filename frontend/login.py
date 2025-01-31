@@ -5,7 +5,7 @@ import requests
 users = ['1', '2', '3']
 
 class LoginPage:
-    def __init__(self):
+    def __init__(self, background_image_path):
         # Initialize Pygame
         pygame.init()
 
@@ -27,6 +27,10 @@ class LoginPage:
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         pygame.display.set_caption("Login Page")
 
+        # Load background image
+        self.background_image = pygame.image.load(background_image_path)
+        self.background_image = pygame.transform.scale(self.background_image, (self.screen_width, self.screen_height))
+
         # Input box
         self.input_box = pygame.Rect(300, 250, 200, 50)
         self.color_inactive = self.gray
@@ -34,7 +38,8 @@ class LoginPage:
         self.color = self.color_inactive
         self.active = False
         self.text = ''
-        self.wid=0
+        self.wid = 0
+
         # Login button
         self.button = pygame.Rect(350, 320, 100, 50)
 
@@ -46,17 +51,7 @@ class LoginPage:
         textrect = textobj.get_rect()
         textrect.topleft = (x, y)
         surface.blit(textobj, textrect)
-        
-    # def check_wid_exists(self, wid):
-    #     url = f"http://localhost:5000/users/wid/{wid}/exists"
-    #     headers = {
-    #         "Accept": "application/json"
-    #     }
-    #     response = requests.get(url, headers=headers)
-    #     if response.status_code == 200:
-    #         data = response.json()
-    #         return data.get("exists", False)
-    #     return False
+
     def check_wid_exists(self, wid):
         url = f"http://localhost:5000/users/wid/{wid}/type"
         headers = {
@@ -80,7 +75,6 @@ class LoginPage:
             print('Network error:', error)
             return False
 
-    
     def run(self):
         running = True
         while running:
@@ -96,36 +90,42 @@ class LoginPage:
                     self.color = self.color_active if self.active else self.color_inactive
 
                     if self.button.collidepoint(event.pos):
-                        user_type = self.check_wid_exists(int(self.text))
-                        if user_type:
-                            self.wid = self.text
-                            print(f"User ID entered: {self.text}")
-                            self.error_message = ''
-                            return [int(self.wid), user_type]
-                            running = False  # Exit the run function
-                        else:
-                            self.error_message = 'User ID not found'
-                        self.text = ''  # Clear the input box
-
-                if event.type == pygame.KEYDOWN:
-                    if self.active:
-                        if event.key == pygame.K_RETURN:
+                        if self.text.isdigit():
                             user_type = self.check_wid_exists(int(self.text))
                             if user_type:
                                 self.wid = self.text
                                 print(f"User ID entered: {self.text}")
                                 self.error_message = ''
-                                return int(self.wid), user_type
+                                return [int(self.wid), user_type]
                                 running = False  # Exit the run function
                             else:
                                 self.error_message = 'User ID not found'
+                        else:
+                            self.error_message = 'Invalid User ID. Only integers are allowed.'
+                        self.text = ''  # Clear the input box
+
+                if event.type == pygame.KEYDOWN:
+                    if self.active:
+                        if event.key == pygame.K_RETURN:
+                            if self.text.isdigit():
+                                user_type = self.check_wid_exists(int(self.text))
+                                if user_type:
+                                    self.wid = self.text
+                                    print(f"User ID entered: {self.text}")
+                                    self.error_message = ''
+                                    return int(self.wid), user_type
+                                    running = False  # Exit the run function
+                                else:
+                                    self.error_message = 'User ID not found'
+                            else:
+                                self.error_message = 'Invalid User ID. Only integers are allowed.'
                             self.text = ''  # Clear the input box
                         elif event.key == pygame.K_BACKSPACE:
                             self.text = self.text[:-1]
                         else:
                             self.text += event.unicode
 
-            self.screen.fill(self.white)
+            self.screen.blit(self.background_image, (0, 0))  # Draw the background image
             self.draw_text('User ID:', self.font, self.black, self.screen, 200, 220)  # Adjusted y position
             txt_surface = self.font.render(self.text, True, self.color)
             width = max(200, txt_surface.get_width() + 10)
@@ -143,8 +143,8 @@ class LoginPage:
 
             pygame.display.flip()
             pygame.time.Clock().tick(30)
-            
 
 if __name__ == "__main__":
-    login_page = LoginPage()
+    background_image_path = '20150402_004.png'  # Replace with your image path
+    login_page = LoginPage(background_image_path)
     print(login_page.run())
