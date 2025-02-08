@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 simulation/yolov8n.pt
 simulation/examplevideo.mp4
 yolov8n.pt
@@ -16,3 +17,8 @@ __pycache__/
 *.mp4
 *.pyc
 *.txt
+=======
+yolo*
+
+output*
+>>>>>>> merge-source
