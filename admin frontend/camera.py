@@ -7,7 +7,7 @@ class CameraSystemInvoker:
         self.setup_paths()
         self.camera_system = None  # Placeholder for the CameraSystem object
         self.is_running = False
-        from camprocess.multiplecam_process import startCameraSystem, stopCameraSystem
+        from camprocess.main import startCameraSystem, stopCameraSystem
         from idle_detection.test import idle_detection_start
         self.startCameraSystem = startCameraSystem
         self.stopCameraSystem = stopCameraSystem

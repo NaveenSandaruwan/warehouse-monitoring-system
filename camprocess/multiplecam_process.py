@@ -1,6 +1,6 @@
 from multiprocessing import Process, Manager
 import time
-from video_processor import process_video
+from test_video import process_video
 
 
 class CameraSystem:
@@ -18,27 +18,29 @@ class CameraSystem:
             "log": "camprocess/log1.txt",
             "camcoordinates": [(13, 0)],
             "rawcoordinates": [(13, 6), (13, 4), (13, 2)],
-            "cam_id": "cam1"
+            "cam_id": "cam1",
+            "use_camera": False
         }
         self.video2 = {
-            "input": "simulation/hallway.mp4",
+            "input": "",
             "output": "testing/output_video2.mp4",
             "log": "camprocess/log2.txt",
             "camcoordinates": [(1, 0)],
             "rawcoordinates": [(1, 6), (1, 4), (1, 2)],
-            "cam_id": "cam2"
+            "cam_id": "cam2",
+            "use_camera": True
         }
         
         # Processes
         self.process1 = Process(target=self.camprocess, args=(
             self.video1["input"], self.video1["output"], self.video1["log"],
             self.video1["camcoordinates"], self.video1["rawcoordinates"],
-            self.shared_data, self.video1["cam_id"]
+            self.shared_data, self.video1["cam_id"], self.video1["use_camera"]
         ))
         self.process2 = Process(target=self.camprocess, args=(
             self.video2["input"], self.video2["output"], self.video2["log"],
             self.video2["camcoordinates"], self.video2["rawcoordinates"],
-            self.shared_data, self.video2["cam_id"]
+            self.shared_data, self.video2["cam_id"], self.video2["use_camera"]
         ))
         self.printer_process = Process(target=self.real_time_file_writer, args=(self.shared_data,))
 
@@ -57,11 +59,11 @@ class CameraSystem:
             time.sleep(0.5)  # Adjust the interval as needed to control file writes
 
     @staticmethod
-    def camprocess(input_video_path, output_video_path, log_file_path, camcoordinates, rawcoordinates, shared_data, cam_id):
+    def camprocess(input_video_path, output_video_path, log_file_path, camcoordinates, rawcoordinates, shared_data, cam_id, use_camera):
         """
         Process a video and save the output.
         """
-        process_video(input_video_path, output_video_path, log_file_path, camcoordinates, rawcoordinates, shared_data, cam_id)
+        process_video(input_video_path, output_video_path, log_file_path, camcoordinates, rawcoordinates, shared_data, cam_id, use_camera)
         print(f"Processing completed. Output video saved at: {output_video_path}")
         print(f"Log file saved at: {log_file_path}")
 
@@ -99,7 +101,7 @@ def stopCameraSystem(camera_system):
 if __name__ == "__main__":
     
     try:
-        c=startCameraSystem()
+        c = startCameraSystem()
         # Simulate runtime
         time.sleep(20)  # Adjust as needed
     finally:
